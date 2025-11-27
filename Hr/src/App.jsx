@@ -6,11 +6,10 @@ import './App.css'
 import { Routes,Route} from 'react-router-dom'
 import Recognition from './pages/Recognition'
 import Layout from './components/layout/Layout'
-import Profile1 from './pages/Profile1'
 import EmployeesPage from './pages/EmployeesPage'
 import Chat from './pages/Chat'
 import Home from './pages/Home'
-import Login from './pages/LogIn'
+import SignUp from './pages/SignUp'
 import Dashboard1 from './pages/Dashboard1'
 import ProfessionalEventsPage from './pages/ProfessionalEventsPage'
 import Feed from './pages/Feed'
@@ -22,7 +21,7 @@ function App() {
       <div>
             <Routes>
               <Route path='/' element={<Home/>}/>
-              <Route path="/login" element={<Login/>}/>
+              <Route path="/login" element={<SignUp/>}/>
               <Route path="/dashboard" element={<Layout><Dashboard1/></Layout>}/>
               <Route path="/profile" element={<Layout><Profile/></Layout>}/>
               <Route path="/event" element={<Layout><ProfessionalEventsPage/></Layout>}/>
