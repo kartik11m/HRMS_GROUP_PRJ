@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pencil } from 'lucide-react';
+
 import axios from 'axios';
 
 const EditProfilePage = ({ onCancel, onSave, profile }) => {

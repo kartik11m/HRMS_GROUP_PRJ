@@ -96,7 +96,16 @@ const SignUp = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[400px]">
                 <div>
                   <label htmlFor="designation" className="block text-sm font-semibold mb-1 text-black">Designation</label>
-                  <input id="designation" name="designation" type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="e.g. Developer" />
+                  <select id="designation" name="designation" value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <option value="">Select designation</option>
+                    <option value="HR">HR</option>
+                    <option value="Developer">Developer</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Designer">Designer</option>
+                    <option value="Intern">Intern</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {errors.designation && <p className="text-red-500 text-xs mt-1">{errors.designation}</p>}
                 </div>
                 <div>
                   <label htmlFor="department" className="block text-sm font-semibold mb-1 text-black">Department</label>
@@ -116,20 +125,6 @@ const SignUp = () => {
                 <label htmlFor="email" className="block text-sm font-semibold mb-1 text-black">Email address</label>
                 <input id="email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="you@example.com" />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="designation" className="block text-sm font-semibold mb-1 text-black">Designation</label>
-                <select id="designation" name="designation" value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base">
-                  <option value="">Select designation</option>
-                  <option value="HR">HR</option>
-                  <option value="Developer">Developer</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Designer">Designer</option>
-                  <option value="Intern">Intern</option>
-                  <option value="Other">Other</option>
-                </select>
-                {errors.designation && <p className="text-red-500 text-xs mt-1">{errors.designation}</p>}
               </div>
 
               <div>

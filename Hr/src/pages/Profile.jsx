@@ -45,16 +45,13 @@ const Profile = () => {
         setIsEditing(false);
     };
 
-<<<<<<< HEAD
     const handleSaveProfile = async (updatedData) => {
         setProfileData(prev => ({ ...prev, ...updatedData }));
-=======
-    const handleSaveProfile = (updatedUser) => {
-        // called by EditProfilePage after successful save
-        if (updatedUser) {
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+        // Also update localStorage if it's the current user
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser && (!id || storedUser.id === profileData?.id)) {
+            localStorage.setItem('user', JSON.stringify({ ...storedUser, ...updatedData }));
         }
->>>>>>> origin/main
         setIsEditing(false);
         fetchProfile();
     };

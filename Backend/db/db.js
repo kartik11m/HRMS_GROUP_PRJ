@@ -5,10 +5,11 @@ dotenv.config();
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
 pool.on("error", (err, client) => {
@@ -18,9 +19,9 @@ pool.on("error", (err, client) => {
 
 pool.connect()
   .then((client) => {
-    console.log("✅ Neon PostgreSQL Connected");
+    console.log("✅ Database Connected");
     client.release();
   })
-  .catch((err) => console.error("❌ Neon Connection Failed:", err));
+  .catch((err) => console.error("❌ DB Connection Failed:", err));
 
 export default pool;
