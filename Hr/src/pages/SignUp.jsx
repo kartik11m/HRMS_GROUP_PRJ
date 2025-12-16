@@ -22,13 +22,14 @@ const SignUp = () => {
   }, []);
 
   const validate = () => {
-    const newErrors = { name: "", email: "", password: "" };
+    const newErrors = { name: "", email: "", password: "", designation: "" };
     if (name.trim().length < 3) newErrors.name = "Name must be at least 3 characters long.";
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email.trim())) newErrors.email = "Please enter a valid email address.";
     if (password.trim().length < 8) newErrors.password = "Password must be at least 8 characters long.";
+    if (designation.trim() === "") newErrors.designation = "Please select your designation.";
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.email && !newErrors.password;
+    return !newErrors.name && !newErrors.email && !newErrors.password && !newErrors.designation;
   };
 
   const handleSubmit = async (e) => {
@@ -42,7 +43,7 @@ const SignUp = () => {
     if (isValid) {
       try {
         const response = await authService.register(name, email, password, designation, department, phone);
-        if (response.success) {
+        if (response.success || response.token) { // handle different success indicators
           // Clear form
           setName(""); setEmail(""); setPassword(""); setDesignation(""); setDepartment(""); setPhone("");
           setErrors({ name: "", email: "", password: "" });
@@ -57,6 +58,7 @@ const SignUp = () => {
       }
     }
   };
+
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center font-[Poppins] px-4 md:px-12 lg:px-24 py-12">
@@ -114,6 +116,20 @@ const SignUp = () => {
                 <label htmlFor="email" className="block text-sm font-semibold mb-1 text-black">Email address</label>
                 <input id="email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="you@example.com" />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="designation" className="block text-sm font-semibold mb-1 text-black">Designation</label>
+                <select id="designation" name="designation" value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base">
+                  <option value="">Select designation</option>
+                  <option value="HR">HR</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Designer">Designer</option>
+                  <option value="Intern">Intern</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.designation && <p className="text-red-500 text-xs mt-1">{errors.designation}</p>}
               </div>
 
               <div>

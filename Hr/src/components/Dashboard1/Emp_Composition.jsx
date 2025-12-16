@@ -2,7 +2,6 @@
 import React, { useMemo, useRef } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip } from "chart.js";
-import { FaMars, FaVenus } from "react-icons/fa";
 
 // Custom plugin to set background color to white
 const backgroundColorPlugin = {
@@ -19,7 +18,7 @@ const backgroundColorPlugin = {
 
 Chart.register(ArcElement, Tooltip, backgroundColorPlugin);
 
-export default function EmpComp({ male = 65, female = 35 }) {
+export default function EmpComp({ total = 856, malePercent = 65, femalePercent = 35 }) {
   const chartRef = useRef(null);
 
   const data = useMemo(
@@ -27,24 +26,32 @@ export default function EmpComp({ male = 65, female = 35 }) {
       labels: ["Male", "Female"],
       datasets: [
         {
-          data: [male, female],
-          backgroundColor: ["#27d9b1", "#3b2bea"],
-          borderColor: "#e8f5fb",
-          borderWidth: 2,
-          hoverOffset: 6,
+          data: [malePercent, femalePercent],
+          backgroundColor: ["#3b82f6", "#10b981"],
+          borderColor: "#ffffff",
+          borderWidth: 0, // No border for cleaner look
+          hoverOffset: 4,
         },
       ],
     }),
-    [male, female]
+    [malePercent, femalePercent]
   );
 
   const options = useMemo(
     () => ({
-      cutout: "70%",
-      rotation: -Math.PI * 0.25,
+      cutout: "80%", // Thinner ring
+      rotation: 0,
       plugins: {
         legend: { display: false },
-        tooltip: { enabled: true },
+        tooltip: {
+          enabled: true,
+          backgroundColor: '#fff',
+          titleColor: '#111827',
+          bodyColor: '#4b5563',
+          borderColor: '#e5e7eb',
+          borderWidth: 1,
+          padding: 10,
+        },
       },
       maintainAspectRatio: false,
     }),
@@ -52,22 +59,40 @@ export default function EmpComp({ male = 65, female = 35 }) {
   );
 
   return (
-    <div className="bg-white rounded-xl p-3.5 shadow-[0_8px_20px_rgba(2,6,23,0.06)] border border-[rgba(19,38,63,0.04)] w-full max-w-[340px] font-[Inter,system-ui,Arial,sans-serif] max-[420px]:w-[92%]">
-      <div className="text-[#155dfc] font-bold m-0 mb-3 ml-1.5 text-lg">Employees Composition</div>
+    <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm w-full h-full flex flex-col min-h-[350px]">
+      <div className="mb-4">
+        <h2 className="text-lg font-bold text-gray-900">Gender Composition</h2>
+        <p className="text-sm text-gray-500">Distribution of employees by gender</p>
+      </div>
 
-      <div className="relative h-60 flex items-center justify-center max-[420px]:h-[200px]">
-        <div className="absolute inset-3 flex items-center justify-center [&>canvas]:w-full! [&>canvas]:h-full!">
+      <div className="relative flex-1 flex items-center justify-center">
+        <div className="w-full h-full max-w-[220px] max-h-[220px] relative">
           <Doughnut ref={chartRef} data={data} options={options} />
-        </div>
 
-        <div className="absolute inline-flex items-center gap-2 px-3 py-2 font-bold bg-white rounded-[10px] shadow-[0_6px_14px_rgba(19,38,63,0.06)] border border-[rgba(19,38,63,0.05)] whitespace-nowrap left-3.5 top-[22px] text-[#3b2bea] max-[420px]:px-2.5 max-[420px]:py-1.5 max-[420px]:text-sm" title="Female">
-          <FaVenus className="text-base" />
-          <span>{female}%</span>
+          {/* Center text showing total */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-sm text-gray-400 font-medium tracking-wide uppercase">Total</span>
+            <span className="text-4xl font-bold text-gray-900 tracking-tight">{total}</span>
+          </div>
         </div>
+      </div>
 
-        <div className="absolute inline-flex items-center gap-2 px-3 py-2 font-bold bg-white rounded-[10px] shadow-[0_6px_14px_rgba(19,38,63,0.06)] border border-[rgba(19,38,63,0.05)] whitespace-nowrap right-3 bottom-[26px] text-[#27d9b1] max-[420px]:px-2.5 max-[420px]:py-1.5 max-[420px]:text-sm" title="Male">
-          <FaMars className="text-base" />
-          <span>{male}%</span>
+      {/* Custom Legend */}
+      <div className="mt-4 flex justify-center gap-6">
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+            <span className="text-xs text-gray-500 font-medium">Male</span>
+          </div>
+          <span className="text-lg font-bold text-gray-900">{malePercent}%</span>
+        </div>
+        <div className="w-px bg-gray-200 h-8 self-center"></div>
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+            <span className="text-xs text-gray-500 font-medium">Female</span>
+          </div>
+          <span className="text-lg font-bold text-gray-900">{femalePercent}%</span>
         </div>
       </div>
     </div>

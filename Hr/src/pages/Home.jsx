@@ -1,35 +1,71 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { isAuthenticated, logout } from "../services/auth.service";
 
 const Home = () => {
   const [open, setOpen] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsAuth(isAuthenticated());
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    setIsAuth(false);
+    navigate("/login");
+  };
+
   return (
     <div>
       <nav className="flex flex-row justify-between md:px-6 ">
         <img src="image 2.svg" alt="" className="w-[150px] h-auto cursor-pointer" />
         <ul className="md:flex gap-9 justify-around text-[20px] py-5 hidden">
-          <li className=" hover:text-blue-600 hover:bg-[#D9D9D9] transition-all duration-300 cursor-pointer">Dashboard</li>
-          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">About</li>
-          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">Profile</li>
-          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">Event</li>
-          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">Chat</li>
-          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer"><Link to={"/login"}>Sign-In</Link></li>
+          <li className=" hover:text-blue-600 hover:bg-[#D9D9D9] transition-all duration-300 cursor-pointer">
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
+          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">
+            <Link to="/about">About</Link>
+          </li>
+          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">
+            <Link to="/profile">Profile</Link>
+          </li>
+          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">
+            <Link to="/event">Event</Link>
+          </li>
+          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">
+            <Link to="/chat">Chat</Link>
+          </li>
+          <li className=" hover:text-blue-600 transition-all duration-300 cursor-pointer">
+            {isAuth ? (
+              <button onClick={handleLogout}>Logout</button>
+            ) : (
+              <Link to="/login">Sign-In</Link>
+            )}
+          </li>
         </ul>
         <div className="md:hidden pt-6 text-2xl" onClick={() => setOpen(!open)}>☰
           {open &&
             <ul >
-            <li>Dashboard</li>
-            <li>About</li>
-            <li>Profile</li>
-            <li>Event</li>
-            <li>Chat</li>
-            <li>Sign-In</li>
+              <li><Link to="/dashboard">Dashboard</Link></li>
+              <li><Link to="/about">About</Link></li>
+              <li><Link to="/profile">Profile</Link></li>
+              <li><Link to="/event">Event</Link></li>
+              <li><Link to="/chat">Chat</Link></li>
+              <li>
+                {isAuth ? (
+                  <button onClick={handleLogout}>Logout</button>
+                ) : (
+                  <Link to="/login">Sign-In</Link>
+                )}
+              </li>
             </ul>
           }
         </div>
       </nav>
       <section className="flex md:flex-row justify-around flex-col gap-5">
-        <div className="md:max-w-[45%] flex flex-col gap-5 text-[18px]"> 
+        <div className="md:max-w-[45%] flex flex-col gap-5 text-[18px]">
           <div className="text-center pb-4 max-w-">
             <p className="text-3xl font-bold text-[#783625]">HRMS</p>
             <p>(Human Resource Management System)</p>
@@ -69,9 +105,9 @@ const Home = () => {
           <div className="flex md:flex-row md:justify-around gap-1 flex-col justify-center">
             <button className="text-blue-600 cursor-pointer bg-[#D9D9D9] h-auto max-w-[200px] mx-auto px-2 md:my-9 my-4 rounded-2xl
             focus:outline-none hover:text-black ">Click For Download</button>
-            
-              <img src="image.svg" alt="" className="p-4 min-w-[200px] my-auto bg-[#D9D9D9] rounded-2xl mx-auto" />
-            
+
+            <img src="image.svg" alt="" className="p-4 min-w-[200px] my-auto bg-[#D9D9D9] rounded-2xl mx-auto" />
+
           </div>
           <p className="text-center text-[20px]">for extended functionality and seamless management.</p>
         </div>

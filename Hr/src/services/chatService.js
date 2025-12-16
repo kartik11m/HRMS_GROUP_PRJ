@@ -3,8 +3,8 @@ import api from './api';
 // Authentication services
 export const authService = {
     register: async (name, email, password, designation, department, phone) => {
-        const response = await api.post('/auth/register', { name, email, password, designation, department, phone });
-        if (response.data.success) {
+        const response = await api.post('/users/signup', { name, email, password, designation, department, phone });
+        if (response.data.success || response.data.token) {
             localStorage.setItem('authToken', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
         }
@@ -12,8 +12,8 @@ export const authService = {
     },
 
     login: async (email, password) => {
-        const response = await api.post('/auth/login', { email, password });
-        if (response.data.success) {
+        const response = await api.post('/users/login', { email, password });
+        if (response.data.success || response.data.token) {
             localStorage.setItem('authToken', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
         }
@@ -21,13 +21,13 @@ export const authService = {
     },
 
     logout: async () => {
-        await api.post('/auth/logout');
+        await api.post('/users/logout');
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
     },
 
     getCurrentUser: async () => {
-        const response = await api.get('/auth/me');
+        const response = await api.get('/users/me');
         return response.data;
     }
 };

@@ -1,7 +1,30 @@
 import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { User } from "lucide-react";
 
 function Sidebar() {
   const location = useLocation();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = () => {
+      try {
+        const u = JSON.parse(localStorage.getItem("user") || "null");
+        setUser(u);
+      } catch (e) {
+        setUser(null);
+      }
+    };
+    loadUser();
+
+    window.addEventListener("user-updated", loadUser);
+    return () => window.removeEventListener("user-updated", loadUser);
+  }, []);
+
+  const fullname = user?.fullname || "Mariya";
+  const designation = user?.designation || "HR Manager";
+  const email = user?.email || "";
+  const avatarSrc = user?.profile_picture;
 
   const menuItems = [
     { name: "Dashboard", path: "/dashboard" },
@@ -10,8 +33,10 @@ function Sidebar() {
     { name: "Feed", path: "/feed" },
     { name: "Recognition", path: "/recognition" },
     { name: "Event", path: "/event" },
+    { name: "Recruitment", path: "/recruitment" },
     { name: "Profile", path: "/profile" },
     { name: "Settings", path: "/settings" },
+
   ];
 
   return (
@@ -22,13 +47,21 @@ function Sidebar() {
 
       {/* PROFILE */}
       <div className="flex items-center gap-3 mb-10">
-        <img
-          src="https://i.pravatar.cc/150?img=47"
-          className="w-14 h-14 rounded-full"
-        />
-        <div>
-          <p className="font-semibold">Mariya</p>
-          <p className="text-sm opacity-70">HR Manager</p>
+        {avatarSrc ? (
+          <img
+            src={avatarSrc}
+            className="w-14 h-14 rounded-full object-cover border-2 border-white/20"
+            alt={fullname}
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white/80 border-2 border-white/20">
+            <User size={24} />
+          </div>
+        )}
+
+        <div className="min-w-0">
+          <p className="font-semibold truncate max-w-[140px]">{fullname}</p>
+          <p className="text-sm opacity-70 capitalize truncate max-w-[140px]">{designation}</p>
         </div>
       </div>
 
@@ -40,11 +73,10 @@ function Sidebar() {
             <li key={item.name}>
               <Link
                 to={item.path}
-                className={`block px-4 py-2 rounded-lg font-medium ${
-                  isActive
-                    ? "bg-white text-[#020839]"
-                    : "text-white hover:bg-[#1e276d]"
-                }`}
+                className={`block px-4 py-2 rounded-lg font-medium ${isActive
+                  ? "bg-white text-[#020839]"
+                  : "text-white hover:bg-[#1e276d]"
+                  }`}
               >
                 {item.name}
               </Link>

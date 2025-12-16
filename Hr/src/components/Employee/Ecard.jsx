@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Mail } from "lucide-react";
 
 const Ecard = ({ employees }) => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const Ecard = ({ employees }) => {
 
           <div className="rounded-2xl bg-gray-50 p-2 gap-0.5 text-gray-600 text-sm truncate">
             <div className="flex items-center gap-2">
-              <i className="fas fa-envelope text-xs"></i>
+              <Mail size={12} />
               <a href={`mailto:${emp.email}`} className="truncate block" title={emp.email}>{emp.email}</a>
             </div>
           </div>

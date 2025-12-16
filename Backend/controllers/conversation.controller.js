@@ -1,11 +1,11 @@
-const pool = require('../config/database');
+import pool from '../db/db.js';
 
 // @desc    Get all conversations for logged in user
 // @route   GET /api/conversations
 // @access  Private
-exports.getConversations = async (req, res) => {
+export const getConversations = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.id; // Confirm if req.user is set correctly by Auth Middleware. Origin's auth middleware sets req.user.
 
         const result = await pool.query(
             `SELECT DISTINCT ON (c.id)
@@ -71,7 +71,7 @@ exports.getConversations = async (req, res) => {
 // @desc    Create new conversation
 // @route   POST /api/conversations
 // @access  Private
-exports.createConversation = async (req, res) => {
+export const createConversation = async (req, res) => {
     const client = await pool.connect();
 
     try {
@@ -154,7 +154,7 @@ exports.createConversation = async (req, res) => {
 // @desc    Get conversation details
 // @route   GET /api/conversations/:id
 // @access  Private
-exports.getConversation = async (req, res) => {
+export const getConversation = async (req, res) => {
     try {
         const conversationId = req.params.id;
         const userId = req.user.id;
@@ -212,7 +212,7 @@ exports.getConversation = async (req, res) => {
 // @desc    Get messages for a conversation
 // @route   GET /api/conversations/:id/messages
 // @access  Private
-exports.getMessages = async (req, res) => {
+export const getMessages = async (req, res) => {
     try {
         const conversationId = req.params.id;
         const userId = req.user.id;

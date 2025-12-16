@@ -1,5 +1,7 @@
-const jwt = require('jsonwebtoken');
-const pool = require('../config/database');
+import jwt from 'jsonwebtoken';
+import pool from '../db/db.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const socketHandler = (io) => {
     // Middleware to authenticate socket connections
@@ -185,4 +187,4 @@ const socketHandler = (io) => {
     });
 };
 
-module.exports = socketHandler;
+export default socketHandler;

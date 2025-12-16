@@ -16,7 +16,7 @@
 // function EmployeesStatistics(){
 //   const maxValue = Math.max(...data.map(item => item.value));
 //   const containerHeight = 130;
- 
+
 //   return (
 //     <div className="bg-white p-6 rounded-xl shadow-lg w-full">
 //       <h2 className="text-lg font-semibold mb-6 text-blue-600">
@@ -26,7 +26,7 @@
 //       <div className="flex items-end justify-between px-5 mx-auto" style={{ height: `${containerHeight}px` }}>
 //         {data.map((item, index) => (
 //           <div key={index} className="flex flex-col items-center gap-1">
-            
+
 //             {/* Bar */}
 //             <p className='text-gray-600 text-sm'>{item.value}</p>
 //             <div
@@ -60,6 +60,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { useEffect, useState } from "react";
 
 const data = [
   { month: "Jan", hires: 25, attrition: 10, growth: 15 },
@@ -77,51 +78,78 @@ const data = [
 ];
 
 export default function HiringStatsChart() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Ensure we only render the responsive chart after mount to avoid zero width/height warnings
+    setMounted(true);
+  }, []);
   return (
-    <div className="w-full h-[400px] bg-white p-6 rounded-xl shadow-md">
-      <h2 className="text-lg font-semibold mb-6 text-blue-600">
-        Monthly Hiring & Attrition Analysis
-      </h2>
+    <div className="w-full h-[400px] bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+      <div className="mb-6">
+        <h2 className="text-lg font-bold text-gray-900">
+          Monthly Hiring & Attrition
+        </h2>
+        <p className="text-sm text-gray-500">Overview of employee movement across the year</p>
+      </div>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <CartesianGrid stroke="#E6E6E6" strokeDasharray="3 3" />
+      {mounted && (
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data}>
+            <CartesianGrid stroke="#E6E6E6" strokeDasharray="3 3" />
 
-          <XAxis dataKey="month" stroke="#333" />
-          <YAxis stroke="#333" />
+            <XAxis
+              dataKey="month"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#6b7280', fontSize: 12 }}
+              dy={10}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#6b7280', fontSize: 12 }}
+            />
 
-          <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+            <Tooltip
+              contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+              itemStyle={{ fontSize: '12px' }}
+            />
 
-          <Legend />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
 
-          <Line
-            type="monotone"
-            dataKey="hires"
-            stroke="#2D8EFF"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-            name="New Hires"
-          />
+            <Line
+              type="monotone"
+              dataKey="hires"
+              stroke="#2563eb" // Blue-600
+              strokeWidth={3}
+              dot={false}
+              activeDot={{ r: 6 }}
+              name="New Hires"
+            />
 
-          <Line
-            type="monotone"
-            dataKey="attrition"
-            stroke="#FF7A45"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-            name="Attrition"
-          />
+            <Line
+              type="monotone"
+              dataKey="attrition"
+              stroke="#ef4444" // Red-500
+              strokeWidth={3}
+              dot={false}
+              activeDot={{ r: 6 }}
+              name="Attrition"
+            />
 
-          <Line
-            type="monotone"
-            dataKey="growth"
-            stroke="#3AC16B"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-            name="Net Growth"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+            <Line
+              type="monotone"
+              dataKey="growth"
+              stroke="#10b981" // Green-500
+              strokeWidth={3}
+              dot={false}
+              activeDot={{ r: 6 }}
+              name="Net Growth"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }

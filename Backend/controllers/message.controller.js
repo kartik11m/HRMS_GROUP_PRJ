@@ -1,9 +1,9 @@
-const pool = require('../config/database');
+import pool from '../db/db.js';
 
 // @desc    Send a message
 // @route   POST /api/messages
 // @access  Private
-exports.sendMessage = async (req, res) => {
+export const sendMessage = async (req, res) => {
     try {
         const { conversationId, content } = req.body;
         const senderId = req.user.id;
@@ -65,7 +65,7 @@ exports.sendMessage = async (req, res) => {
 // @desc    Mark message as read
 // @route   PUT /api/messages/:id/read
 // @access  Private
-exports.markAsRead = async (req, res) => {
+export const markAsRead = async (req, res) => {
     try {
         const messageId = req.params.id;
         const userId = req.user.id;
@@ -128,7 +128,7 @@ exports.markAsRead = async (req, res) => {
 // @desc    Mark all messages in conversation as read
 // @route   PUT /api/conversations/:id/read
 // @access  Private
-exports.markConversationAsRead = async (req, res) => {
+export const markConversationAsRead = async (req, res) => {
     try {
         const conversationId = req.params.id;
         const userId = req.user.id;

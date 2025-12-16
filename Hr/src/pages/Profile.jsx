@@ -45,8 +45,16 @@ const Profile = () => {
         setIsEditing(false);
     };
 
+<<<<<<< HEAD
     const handleSaveProfile = async (updatedData) => {
         setProfileData(prev => ({ ...prev, ...updatedData }));
+=======
+    const handleSaveProfile = (updatedUser) => {
+        // called by EditProfilePage after successful save
+        if (updatedUser) {
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+        }
+>>>>>>> origin/main
         setIsEditing(false);
         fetchProfile();
     };

@@ -4,13 +4,13 @@ import axios from 'axios';
 
 const EditProfilePage = ({ onCancel, onSave, profile }) => {
     const [formData, setFormData] = useState({
-        name: profile?.name || '',
+        name: profile?.fullname || profile?.name || '',
         designation: profile?.designation || '',
         department: profile?.department || '',
         dob: profile?.dob ? new Date(profile.dob).toISOString().split('T')[0] : '',
         phone: profile?.phone || '',
         address: profile?.address || '',
-        skills: profile?.skills ? profile.skills.join(', ') : '',
+        skills: profile?.skills ? (Array.isArray(profile.skills) ? profile.skills.join(', ') : profile.skills) : '',
         emergency_contact_name: profile?.emergency_contact?.name || '',
         emergency_contact_phone: profile?.emergency_contact?.phone || '',
         emergency_contact_relation: profile?.emergency_contact?.relation || ''
@@ -22,20 +22,27 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
 
     const handleSubmit = async () => {
         try {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('authToken') || localStorage.getItem('token');
             const dataToSend = {
-                ...formData,
-                skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
-                emergency_contact: {
-                    name: formData.emergency_contact_name,
-                    phone: formData.emergency_contact_phone,
-                    relation: formData.emergency_contact_relation
-                }
+                fullname: formData.name,
+                designation: formData.designation,
+                department: formData.department,
+                phone: formData.phone
+                // Other fields are ignored by backend for now but kept in state
             };
 
-            await axios.put('http://localhost:3000/api/employees/profile', dataToSend, {
+            const userId = profile?.id || JSON.parse(localStorage.getItem('user'))?.id;
+
+            await axios.put(`http://localhost:3000/api/users/${userId}`, dataToSend, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            // Update localStorage if it's the current user
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            if (storedUser && storedUser.id === userId) {
+                const updatedUser = { ...storedUser, ...dataToSend };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+            }
 
             onSave(dataToSend);
         } catch (error) {
@@ -47,28 +54,26 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
     if (!profile) return null;
 
     return (
-        <div className="p-4 sm:p-8 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 border-b-2 border-gray-900 inline-block mb-12 pb-1">
-                Edit Profile
-            </h1>
+        <div className="p-4 sm:p-8 max-w-4xl mx-auto relative z-10">
+            <h1 className="text-3xl font-bold text-gray-900 border-b-2 border-gray-900 inline-block mb-12 pb-1">Edit Profile</h1>
 
             <div className="flex flex-col items-center mb-12">
                 <div className="relative">
                     <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200">
-                        {profile.avatar ? (
+                        {profile.avatar || profile.profile_picture ? (
                             <img
-                                src={profile.avatar}
+                                src={profile.avatar || profile.profile_picture}
                                 alt={profile.name}
                                 className="w-full h-full object-cover"
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold text-4xl">
-                                {profile.name?.charAt(0)}
+                                {(formData.name || '').charAt(0)}
                             </div>
                         )}
                     </div>
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 mt-4">{profile.name}</h2>
+                <h2 className="text-xl font-bold text-gray-900 mt-4">{formData.name}</h2>
             </div>
 
             <div className="space-y-6 max-w-2xl mx-auto">

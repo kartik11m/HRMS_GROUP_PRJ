@@ -10,31 +10,26 @@ const statsData = [
 
 export default function StatsCards() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {statsData.map((stat, index) => (
         <div
           key={index}
-          className="bg-white p-3 rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.03] transition-transform duration-300 ease-in-out"
+          className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300"
         >
-          <div className="dark:bg-zinc-700 flex justify-between items-center mb-1">
-            <h3 className="text-gray-500 text-xs font-medium dark:text-white">{stat.title}</h3>
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-gray-500 text-sm font-medium">{stat.title}</h3>
             <span
-              className={`flex items-center text-xs font-semibold ${
-                stat.positive ? "text-green-500" : "text-red-500"
-              }`}
+              className={`flex items-center text-xs font-semibold px-2 py-0.5 rounded-full ${stat.positive ? "text-green-700 bg-green-50" : "text-red-700 bg-red-50"
+                }`}
             >
-              {stat.positive ? (
-                <ArrowUpRight size={14} />
-              ) : (
-                <ArrowDownRight size={14} />
-              )}
+              {stat.positive ? <ArrowUpRight size={14} className="mr-1" /> : <ArrowDownRight size={14} className="mr-1" />}
               {stat.change}
             </span>
           </div>
-          <p className=" dark:bg-zinc-700 text-2xl font-semibold text-gray-800">
+          <p className="text-3xl font-bold text-gray-900 tracking-tight">
             {stat.value.toLocaleString()}
           </p>
-          <p className="text-xs text-gray-500 font-medium mt-0.5s">
+          <p className="text-xs text-gray-400 mt-1 capitalize">
             {stat.label}
           </p>
         </div>

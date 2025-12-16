@@ -4,7 +4,10 @@ import { authService } from "../services/chatService";
 
 export default function LogPage() {
   const navigate = useNavigate();
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
   useEffect(() => {
     const form = document.getElementById("loginForm");
     const emailInput = document.getElementById("Iemail");
@@ -20,10 +23,13 @@ export default function LogPage() {
       togglePassword.textContent = type === "password" ? "Show" : "Hide";
     };
 
+<<<<<<< HEAD
     if (togglePassword) {
       togglePassword.addEventListener("click", togglePasswordHandler);
     }
 
+=======
+>>>>>>> origin/main
     const submitHandler = async (e) => {
       e.preventDefault();
       let isValid = true;
@@ -46,6 +52,7 @@ export default function LogPage() {
 
       if (isValid) {
         try {
+<<<<<<< HEAD
           const response = await authService.login(emailInput.value.trim(), passwordInput.value.trim());
           if (response.success) {
             form.reset();
@@ -56,6 +63,15 @@ export default function LogPage() {
         } catch (error) {
           console.error("Login error:", error);
           alert(error.response?.data?.message || "An error occurred during login");
+=======
+          const { login } = await import("../services/auth.service.js");
+          await login(emailInput.value.trim(), passwordInput.value.trim());
+          alert("Login successful!");
+          form.reset();
+          navigate("/dashboard");
+        } catch (error) {
+          alert(error.message);
+>>>>>>> origin/main
         }
       }
     };

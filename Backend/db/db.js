@@ -1,0 +1,26 @@
+import pkg from "pg"; // pg package
+import dotenv from "dotenv";
+
+dotenv.config();
+const { Pool } = pkg;
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+pool.on("error", (err, client) => {
+  console.error("Unexpected error on idle client", err);
+  process.exit(-1);
+});
+
+pool.connect()
+  .then((client) => {
+    console.log("✅ Neon PostgreSQL Connected");
+    client.release();
+  })
+  .catch((err) => console.error("❌ Neon Connection Failed:", err));
+
+export default pool;

@@ -1,261 +1,378 @@
-import { useState, useEffect } from 'react';
+import * as employeeOfMonthService from '../../services/employeeOfMonthService';
+import { Calendar, Clock, Trophy, Users, Plus, X, Trash2, Award, ChevronRight } from 'lucide-react';
 
-// Simple Modal Component for Employee Selection
-const EmployeeSelectionModal = ({ isOpen, onClose, onSave }) => {
-    const [candidates, setCandidates] = useState([]);
-    const [selectedUserId, setSelectedUserId] = useState('');
-    const [description, setDescription] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [loadingCandidates, setLoadingCandidates] = useState(false);
+const FeedPage3 = ({ onNavigateBack }) => {
+    const [employeeData, setEmployeeData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [error, setError] = useState(null);
+
+    // Form state
+    const [formData, setFormData] = useState({
+        userId: '',
+        description: '',
+        month: '',
+        teamMembers: [{ userId: '', role: '' }]
+    });
 
     useEffect(() => {
-        if (isOpen) {
-            fetchCandidates();
-        }
-    }, [isOpen]);
+        fetchEmployeeOfMonth();
+    }, []);
 
-    const fetchCandidates = async () => {
-        setLoadingCandidates(true);
+    const fetchEmployeeOfMonth = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const headers = { 'Content-Type': 'application/json' };
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            const response = await fetch('http://localhost:3000/api/employee-of-month/candidates', { headers });
-            if (response.ok) {
-                const data = await response.json();
-                setCandidates(data);
+            setLoading(true);
+            setError(null);
+            const response = await employeeOfMonthService.getCurrentEmployeeOfMonth();
+            if (response.success) {
+                setEmployeeData(response.data);
             }
         } catch (error) {
-            console.error('Error fetching candidates', error);
+            console.error('Error fetching employee of the month:', error);
+            setError('Failed to load employee of the month');
         } finally {
-            setLoadingCandidates(false);
+            setLoading(false);
         }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            setError(null);
+            console.log('Fetching users...');
+            const response = await employeeOfMonthService.getAllUsers();
+            if (response.success) {
+                setUsers(response.users || []);
+            } else {
+                setUsers([]);
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            setUsers([]);
+        }
+    };
+
+    const handleOpenModal = async () => {
+        setShowModal(true);
+        await fetchUsers();
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setFormData({
+            userId: '',
+            description: '',
+            month: '',
+            teamMembers: [{ userId: '', role: '' }]
+        });
+    };
+
+    const handleAddTeamMember = () => {
+        setFormData({
+            ...formData,
+            teamMembers: [...formData.teamMembers, { userId: '', role: '' }]
+        });
+    };
+
+    const handleRemoveTeamMember = (index) => {
+        const newTeamMembers = formData.teamMembers.filter((_, i) => i !== index);
+        setFormData({
+            ...formData,
+            teamMembers: newTeamMembers
+        });
+    };
+
+    const handleTeamMemberChange = (index, field, value) => {
+        const newTeamMembers = [...formData.teamMembers];
+        newTeamMembers[index][field] = value;
+        setFormData({
+            ...formData,
+            teamMembers: newTeamMembers
+        });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const headers = { 'Content-Type': 'application/json' };
-            if (token) headers['Authorization'] = `Bearer ${token}`;
+            const teamMembers = formData.teamMembers.filter(
+                member => member.userId && member.role
+            );
 
-            // Hardcoding team members for now as per MVP plan, can represent current user or random
-            // In real app, this would be another multi-select
-            const dummyTeam = [
-                { userId: candidates.find(c => c.id !== parseInt(selectedUserId))?.id || 1, role: 'Member' },
-                { userId: candidates.find(c => c.id !== parseInt(selectedUserId))?.id || 2, role: 'Member' }
-            ];
+            await employeeOfMonthService.createEmployeeOfMonth(
+                parseInt(formData.userId),
+                formData.description,
+                formData.month,
+                teamMembers.map(member => ({
+                    userId: parseInt(member.userId),
+                    role: member.role
+                }))
+            );
 
-            const payload = {
-                userId: selectedUserId,
-                month: new Date().toISOString().slice(0, 10), // Today's date as month identifier
-                description,
-                teamMembers: dummyTeam
-            };
-
-            const response = await fetch('http://localhost:3000/api/employee-of-month', {
-                method: 'POST',
-                headers,
-                body: JSON.stringify(payload)
-            });
-
-            if (response.ok) {
-                onSave(); // Refresh parent data
-                onClose();
-            } else {
-                alert('Failed to save');
-            }
+            handleCloseModal();
+            fetchEmployeeOfMonth();
         } catch (error) {
-            console.error('Error saving winner', error);
-            alert('Error occurred');
-        } finally {
-            setLoading(false);
+            console.error('Error creating employee of the month:', error);
+            alert('Failed to create employee of the month');
         }
     };
 
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Select Employee of the Month</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
-                        <select
-                            required
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={selectedUserId}
-                            onChange={(e) => setSelectedUserId(e.target.value)}
-                            disabled={loadingCandidates}
-                        >
-                            <option value="">Select an employee...</option>
-                            {candidates.map(c => (
-                                <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea
-                            required
-                            rows="4"
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Why are they the winner?"
-                        ></textarea>
-                    </div>
-
-                    <div className="flex justify-end gap-3 mt-6">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading || !selectedUserId}
-                            className="px-4 py-2 bg-[#266ECD] text-white rounded-lg font-bold hover:bg-opacity-90 disabled:opacity-50"
-                        >
-                            {loading ? 'Publishing...' : 'Publish Winner'}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-};
-
-const FeedPage3 = ({ onNavigateBack }) => {
-    const [employee, setEmployee] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const fetchEmployee = async () => {
-        setLoading(true); // Show loading while refreshing
-        try {
-            const token = localStorage.getItem('token');
-            const headers = { 'Content-Type': 'application/json' };
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            const response = await fetch('http://localhost:3000/api/employee-of-month/current', { headers });
-
-            if (!response.ok) {
-                if (response.status === 404) {
-                    setEmployee(null);
-                    // setLoading(false); // Handled in finally
-                    return;
-                }
-                throw new Error('Failed to fetch data');
+    const handleDeleteTeamMember = async (teamMemberId) => {
+        if (window.confirm('Are you sure you want to remove this team member?')) {
+            try {
+                await employeeOfMonthService.deleteTeamMember(teamMemberId);
+                fetchEmployeeOfMonth();
+            } catch (error) {
+                console.error('Error deleting team member:', error);
+                alert('Failed to delete team member');
             }
-
-            const data = await response.json();
-            setEmployee(data);
-            setError(null);
-        } catch (err) {
-            console.error(err);
-            // setError('Could not load Employee of the Month'); 
-            // Don't show error on refresh if possible, but for initial load it's fine
-            if (!employee) setError('Could not load data');
-        } finally {
-            setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchEmployee();
-    }, []);
-
-    // Loading State
-    if (loading && !employee) {
-        // Only show full screen spinner if we don't have data yet
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-        );
-    }
+    const handleDeleteEmployeeOfMonth = async () => {
+        if (window.confirm('Are you sure you want to delete the Employee of the Month? This will remove the entire entry and team.')) {
+            try {
+                await employeeOfMonthService.deleteEmployeeOfMonth(employeeData.id);
+                setEmployeeData(null);
+            } catch (error) {
+                console.error('Error deleting employee of the month:', error);
+                alert('Failed to delete employee of the month');
+            }
+        }
+    };
 
     return (
-        <div className="p-4 sm:p-8">
-            <EmployeeSelectionModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSave={fetchEmployee}
-            />
-
-            <div className="max-w-7xl mx-auto">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={onNavigateBack}
-                            className="text-gray-600 hover:text-gray-800"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-                        <div>
-                            <h1 className="text-xl font-bold text-[#266ECD]">Feed</h1>
-                            <p className="text-sm text-gray-500 mt-1">Stay Connected and Informed</p>
-                        </div>
-                    </div>
-
-                    {/* Admin Button */}
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-700 flex items-center gap-2"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        Select Winner
-                    </button>
+        <div className="p-6 sm:p-10 max-w-[1600px] mx-auto min-h-screen">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-10">
+                <div>
+                    <h1 className="text-3xl font-bold text-[#020839] tracking-tight">Feed & Recognition</h1>
+                    <p className="text-gray-500 mt-1">Celebrate success and stay updated with the team.</p>
                 </div>
+                <button
+                    onClick={handleOpenModal}
+                    className="bg-orange-500 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-sm flex items-center gap-2"
+                >
+                    <Plus size={20} />
+                    Add New
+                </button>
+            </div>
 
-                {/* Empty State / No Winner */}
-                {(error || !employee) ? (
-                    <div className="text-center p-12 bg-white rounded-3xl shadow-md border-2 border-dashed border-gray-300">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span className="text-4xl">🏆</span>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {/* Main Content */}
+                <div className="xl:col-span-2 space-y-8">
+                    {loading ? (
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+                            <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-gray-500 font-medium">Loading recognitions...</p>
                         </div>
-                        <h2 className="text-xl font-bold text-gray-700">No Employee of the Month Yet</h2>
-                        <p className="text-gray-500 mt-2 max-w-md mx-auto">
-                            The winner for this month hasn't been selected yet. Click the "Select Winner" button above to announce the champion!
-                        </p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Main Content */}
-                        <div className="lg:col-span-2 space-y-6">
+                    ) : employeeData ? (
+                        <>
                             {/* Employee of the Month Card */}
-                            <div className="bg-white rounded-3xl shadow-md p-8">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#020839] to-orange-500"></div>
+
                                 {/* Header */}
-                                <div className="text-center mb-8">
-                                    <h2 className="text-sm font-bold text-gray-700 tracking-widest uppercase">
-                                        Employee of the Month
-                                    </h2>
+                                <div className="flex justify-between items-start mb-8 z-10 relative">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-orange-100 p-2.5 rounded-lg text-orange-600">
+                                            <Trophy size={24} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-bold text-[#020839]">Employee of the Month</h2>
+                                            <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">{employeeData.month}</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={handleDeleteEmployeeOfMonth}
+                                        className="text-gray-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                                        title="Delete Entry"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
                                 </div>
 
-                                {/* Featured Employee */}
-                                <div className="text-center mb-8">
-                                    <div className="inline-block mb-6">
-                                        <div className="w-40 h-40 rounded-3xl overflow-hidden bg-white border border-gray-200 p-1">
-                                            <div className="w-full h-full rounded-3xl overflow-hidden">
-                                                <img
-                                                    src={`https://i.pravatar.cc/200?u=${employee.user_id}`}
-                                                    alt={employee.name}
-                                                    className="w-full h-full object-cover"
-                                                />
+                                {/* Featured Employee Content */}
+                                <div className="flex flex-col items-center justify-center text-center">
+                                    <div className="relative mb-6">
+                                        <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg ring-4 ring-orange-50">
+                                            <img
+                                                src={`https://i.pravatar.cc/200?u=${employeeData.user_email}`}
+                                                alt={employeeData.user_name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="absolute -bottom-2 -right-2 bg-orange-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                                            <Award size={20} />
+                                        </div>
+                                    </div>
+
+                                    <h3 className="text-2xl font-bold text-[#020839] mb-2">{employeeData.user_name}</h3>
+
+                                    <div className="max-w-xl mx-auto mt-4 px-6 py-4 bg-gray-50 rounded-xl border border-gray-100 relative">
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gray-50 border-t border-l border-gray-100 transform rotate-45"></div>
+                                        <p className="text-gray-600 leading-relaxed italic">
+                                            "{employeeData.description}"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Team Section */}
+                            {employeeData.team && employeeData.team.length > 0 && (
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <Users size={20} className="text-[#020839]" />
+                                        <h3 className="text-lg font-bold text-[#020839]">Key Contributors</h3>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                        {employeeData.team.map((member) => (
+                                            <div key={member.id} className="relative group bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-orange-200 transition-colors">
+                                                <button
+                                                    onClick={() => handleDeleteTeamMember(member.id)}
+                                                    className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+
+                                                <div className="flex items-center gap-4">
+                                                    <img
+                                                        src={`https://i.pravatar.cc/150?u=${member.user_email}`}
+                                                        alt={member.user_name}
+                                                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                                                    />
+                                                    <div className="min-w-0">
+                                                        <h4 className="font-bold text-[#020839] text-sm truncate">{member.user_name}</h4>
+                                                        <p className="text-orange-600 text-xs font-medium truncate">{member.role}</p>
+                                                    </div>
+                                                </div>
                                             </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Trophy size={32} className="text-gray-300" />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#020839] mb-2">No Recognition Yet</h3>
+                            <p className="text-gray-500 mb-8 max-w-sm mx-auto">Start celebrating your team's success by adding the first Employee of the Month.</p>
+                            <button
+                                onClick={handleOpenModal}
+                                className="bg-[#020839] text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-opacity-90 transition-all shadow-sm"
+                            >
+                                Recognize Someone
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="space-y-6">
+                    {/* Points Card */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Reward Points</h3>
+                            <div className="bg-orange-100 text-orange-700 text-xs font-bold px-2 py-1 rounded-md">NEW</div>
+                        </div>
+                        <div className="flex items-end gap-2 mb-4">
+                            <span className="text-4xl font-bold text-[#020839]">250</span>
+                            <span className="text-sm text-gray-400 font-medium mb-1">pts available</span>
+                        </div>
+                        <button className="w-full bg-[#020839] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-opacity-90 transition-all">
+                            Redeem Rewards
+                        </button>
+                    </div>
+
+                    {/* Upcoming Events */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
+                            <Calendar size={18} className="text-orange-500" />
+                            <h3 className="font-bold text-[#020839]">Upcoming Events</h3>
+                        </div>
+                        <div className="space-y-4">
+                            {[
+                                { title: "Team Building Workshop", time: "10:00 AM", date: "13 Oct", color: "bg-blue-500" },
+                                { title: "EOM Award Ceremony", time: "4:00 PM", date: "20 Oct", color: "bg-orange-500" },
+                                { title: "Town Hall Meeting", time: "2:00 PM", date: "10 Nov", color: "bg-purple-500" },
+                            ].map((event, idx) => (
+                                <div key={idx} className="flex items-start gap-3 group cursor-pointer">
+                                    <div className="flex flex-col items-center">
+                                        <div className={`w-2 h-2 rounded-full ${event.color} mt-1.5`}></div>
+                                        {idx !== 2 && <div className="w-0.5 h-full bg-gray-100 my-1"></div>}
+                                    </div>
+                                    <div className="flex-1 pb-2">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">{event.title}</p>
+                                            <span className="text-xs font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">{event.date}</span>
+                                        </div>
+                                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                                            <Clock size={10} />
+                                            {event.time}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-[#020839] flex items-center justify-center gap-1 uppercase tracking-wide transition-colors">
+                            View Calendar <ChevronRight size={12} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-[#020839]/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-100">
+                        <div className="p-8">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-[#020839]">Add Recognition</h2>
+                                <button
+                                    onClick={handleCloseModal}
+                                    className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-50 transition"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                {/* Employee Selection */}
+                                <div>
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Core Info</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Select Employee</label>
+                                            <div className="relative">
+                                                <select
+                                                    value={formData.userId}
+                                                    onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
+                                                    className="w-full pl-4 pr-10 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 appearance-none bg-white font-medium text-gray-700 transition-all"
+                                                    required
+                                                >
+                                                    <option value="">Choose...</option>
+                                                    {users.map((user) => (
+                                                        <option key={user.id} value={user.id}>
+                                                            {user.fullname}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronRight className="absolute right-3 top-3 text-gray-400 rotate-90 w-4 h-4 pointer-events-none" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Month</label>
+                                            <input
+                                                type="text"
+                                                value={formData.month}
+                                                onChange={(e) => setFormData({ ...formData, month: e.target.value })}
+                                                placeholder="e.g. December 2025"
+                                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium text-gray-700 transition-all"
+                                                required
+                                            />
                                         </div>
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-1">{employee.name}</h3>
@@ -268,40 +385,43 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                         {employee.description}
                                     </p>
                                 </div>
-                            </div>
+<<<<<<< HEAD
+                            </div >
 
-                            {/* Team Section */}
-                            {employee.team && employee.team.length > 0 && (
-                                <div className="bg-white rounded-3xl shadow-md p-8">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-6">Team</h3>
+    {/* Team Section */ }
+{
+    employee.team && employee.team.length > 0 && (
+        <div className="bg-white rounded-3xl shadow-md p-8">
+            <h3 className="text-lg font-bold text-gray-800 mb-6">Team</h3>
 
-                                    <div className="grid grid-cols-3 gap-6">
-                                        {employee.team.map((member) => (
-                                            <div key={member.id} className="text-center">
-                                                <div className="mb-4">
-                                                    <div className="w-28 h-28 mx-auto rounded-3xl overflow-hidden bg-white border border-gray-200 p-1">
-                                                        <div className="w-full h-full rounded-3xl overflow-hidden">
-                                                            <img
-                                                                src={`https://i.pravatar.cc/150?u=${member.user_id}`}
-                                                                alt={member.name}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <h4 className="font-bold text-gray-900 text-sm mb-1">{member.name}</h4>
-                                                <p className="text-gray-500 text-xs">{member.role}</p>
-                                            </div>
-                                        ))}
-                                    </div>
+            <div className="grid grid-cols-3 gap-6">
+                {employee.team.map((member) => (
+                    <div key={member.id} className="text-center">
+                        <div className="mb-4">
+                            <div className="w-28 h-28 mx-auto rounded-3xl overflow-hidden bg-white border border-gray-200 p-1">
+                                <div className="w-full h-full rounded-3xl overflow-hidden">
+                                    <img
+                                        src={`https://i.pravatar.cc/150?u=${member.user_id}`}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
-                            )}
+                            </div>
                         </div>
+                        <h4 className="font-bold text-gray-900 text-sm mb-1">{member.name}</h4>
+                        <p className="text-gray-500 text-xs">{member.role}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+                        </div >
 
-                        {/* Right Sidebar - Same as FeedPage2 */}
-                        <div className="space-y-6">
-                            {/* New Point Alert */}
-                            <div className="bg-white rounded-2xl shadow-md p-6">
+    {/* Right Sidebar - Same as FeedPage2 */ }
+    < div className = "space-y-6" >
+        {/* New Point Alert */ }
+        < div className = "bg-white rounded-2xl shadow-md p-6" >
                                 <h3 className="text-lg font-bold text-[#266ECD] mb-4">New Point Alert!</h3>
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="text-5xl font-bold text-[#266ECD]">250</div>
@@ -309,76 +429,96 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                         <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                         </svg>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-gray-600 mb-4">Reward points with Manager</p>
-                                <button className="w-full bg-[#266ECD] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg">
-                                    Attempt
-                                </button>
-                            </div>
+=======
 
-                            {/* Don't Miss Out! Training Session */}
-                            <div className="bg-white rounded-2xl shadow-md p-6">
-                                <h3 className="text-lg font-bold text-[#266ECD] mb-4">Don't Miss Out! Upcoming Training Session</h3>
-                                <div className="space-y-2 mb-5">
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Date:</span> 29 Oct
-                                    </p>
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Time:</span> 9:00 AM - 12:00 PM
-                                    </p>
+                                {/* Description */}
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                                    <textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Why does this employee deserve recognition?"
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 min-h-[120px] resize-none transition-all"
+                                        required
+                                    />
                                 </div>
-                                <button className="w-full bg-[#266ECD] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg">
-                                    Register
-                                </button>
-                            </div>
 
-                            {/* Upcoming Events */}
-                            <div className="bg-white rounded-2xl shadow-md p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                                        </svg>
-                                        Upcoming Events
-                                    </h3>
+                                {/* Team Members */}
+                                <div>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Team Recognition</h3>
+                                        <button
+                                            type="button"
+                                            onClick={handleAddTeamMember}
+                                            className="text-orange-600 text-sm font-semibold hover:text-orange-700 flex items-center gap-1"
+                                        >
+                                            <Plus size={16} /> Add Member
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {formData.teamMembers.map((member, index) => (
+                                            <div key={index} className="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                                <div className="flex-1 grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Member</label>
+                                                        <select
+                                                            value={member.userId}
+                                                            onChange={(e) => handleTeamMemberChange(index, 'userId', e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 bg-white"
+                                                        >
+                                                            <option value="">Select...</option>
+                                                            {users.map((user) => (
+                                                                <option key={user.id} value={user.id}>{user.fullname}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-semibold text-gray-500 mb-1">Role</label>
+                                                        <input
+                                                            type="text"
+                                                            value={member.role}
+                                                            onChange={(e) => handleTeamMemberChange(index, 'role', e.target.value)}
+                                                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-orange-500"
+                                                            placeholder="Role in project"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                {formData.teamMembers.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveTeamMember(index)}
+                                                        className="mt-6 text-gray-400 hover:text-red-500"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-900">Team Building Workshop</p>
-                                            <p className="text-xs text-gray-500">10:00 AM - 1:00 PM</p>
-                                        </div>
-                                        <span className="text-sm font-bold text-gray-900">13 Oct</span>
-                                    </div>
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-900">Employee of the Month Award</p>
-                                            <p className="text-xs text-gray-500">4:00 PM - 4:30 PM</p>
-                                        </div>
-                                        <span className="text-sm font-bold text-gray-900">20 Oct</span>
-                                    </div>
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-900">Diversity and Inclusion Seminar</p>
-                                            <p className="text-xs text-gray-500">9:30 AM - 12:30 PM</p>
-                                        </div>
-                                        <span className="text-sm font-bold text-gray-900">5 Nov</span>
-                                    </div>
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-900">Town Hall Meeting</p>
-                                            <p className="text-xs text-gray-500">2:00 PM - 3:30 PM</p>
-                                        </div>
-                                        <span className="text-sm font-bold text-gray-900">10 Nov</span>
-                                    </div>
-                                    <button className="text-[#266ECD] text-sm font-semibold hover:underline">More...</button>
+
+                                {/* Footer Actions */}
+                                <div className="flex gap-4 pt-4 border-t border-gray-100">
+                                    <button
+                                        type="button"
+                                        onClick={handleCloseModal}
+                                        className="px-6 py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="flex-1 px-6 py-2.5 bg-[#020839] text-white rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg shadow-blue-900/20"
+                                    >
+                                        Save Recognition
+                                    </button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

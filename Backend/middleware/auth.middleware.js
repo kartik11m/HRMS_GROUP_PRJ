@@ -1,47 +1,25 @@
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken"; // auth
+import { isTokenBlacklisted } from "../models/blacklistedTokens.js";
 
-const authMiddleware = async (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
     try {
-        // Get token from header
-        const authHeader = req.headers.authorization;
+        const token = req.header("Authorization")?.replace("Bearer ", "");
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({
-                success: false,
-                message: 'No token provided, authorization denied'
-            });
+        if (!token) {
+            return res.status(401).json({ message: "Access denied. No token provided." });
         }
 
-        // Extract token
-        const token = authHeader.split(' ')[1];
+        const isBlacklisted = await isTokenBlacklisted(token);
+        if (isBlacklisted) {
+            return res.status(401).json({ message: "Token is blacklisted. Please login again." });
+        }
 
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        // Add user info to request
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
         req.user = decoded;
-
+        req.token = token; // Attach token for logout
         next();
     } catch (error) {
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid token'
-            });
-        }
-
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
-                success: false,
-                message: 'Token expired'
-            });
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Server error during authentication'
-        });
+        console.error("Auth Middleware Error:", error.message);
+        res.status(401).json({ message: "Invalid or expired token." });
     }
 };
-
-module.exports = authMiddleware;

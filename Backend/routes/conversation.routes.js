@@ -1,16 +1,17 @@
-const express = require('express');
+import express from 'express';
+import { getConversations, createConversation, getConversation, getMessages } from '../controllers/conversation.controller.js';
+import { markConversationAsRead } from '../controllers/message.controller.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+
 const router = express.Router();
-const conversationController = require('../controllers/conversation.controller');
-const messageController = require('../controllers/message.controller');
-const authMiddleware = require('../middleware/auth.middleware');
 
 // All routes are protected
 router.use(authMiddleware);
 
-router.get('/', conversationController.getConversations);
-router.post('/', conversationController.createConversation);
-router.get('/:id', conversationController.getConversation);
-router.get('/:id/messages', conversationController.getMessages);
-router.put('/:id/read', messageController.markConversationAsRead);
+router.get('/', getConversations);
+router.post('/', createConversation);
+router.get('/:id', getConversation);
+router.get('/:id/messages', getMessages);
+router.put('/:id/read', markConversationAsRead);
 
-module.exports = router;
+export default router;

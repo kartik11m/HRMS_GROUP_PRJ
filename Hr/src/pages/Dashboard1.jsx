@@ -13,19 +13,25 @@ function Dashboard1() {
 
   return (
     <>
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-48' : 'ml-0'} `}>
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-48' : 'ml-0'} min-h-screen`}>
         {currentPage === "Dashboard" && (
-          <div className="p-4 sm:p-8">
-            <h1 className="text-xl font-bold text-blue-600 mb-6">Dashboard</h1>
+          <div className="p-6 sm:p-10 max-w-[1600px] mx-auto">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
+              <p className="text-gray-500 mt-1 text-sm">Welcome back, here's what's happening today.</p>
+            </div>
+
             <StatsCards />
-            <div className="mt-2">
+
+            <div className="mt-8">
               <EmployeesStatistics />
             </div>
-            <div className="mt-8 flex flex-col lg:flex-row items-start gap-6">
-              <div className="flex-1 w-full lg:max-w-lg">
+
+            <div className="mt-8 grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div className="w-full h-full mt-8">
                 <MeetingsUI />
               </div>
-              <div className="w-full lg:w-48 flex justify-center lg:justify-start">
+              <div className="w-full h-full mt-8">
                 <EmpComposition />
               </div>
             </div>
