@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Meg Griffin",
+    "email": "meg@hrms.com"
+  },
+  {
+    "id": 2,
+    "name": "The Boyz",
+    "email": "boyz@hrms.com"
+  },
+  {
+    "id": 3,
+    "name": "Stewie Griffin",
+    "email": "stewie@hrms.com"
+  },
+  {
+    "id": 4,
+    "name": "Glenn Quagmire",
+    "email": "glenn@hrms.com"
+  },
+  {
+    "id": 5,
+    "name": "Herbert",
+    "email": "herbert@hrms.com"
+  },
+  {
+    "id": 6,
+    "name": "John Doe",
+    "email": "john@hrms.com"
+  },
+  {
+    "id": 8,
+    "name": "Jay",
+    "email": "jay@gmail.com"
+  },
+  {
+    "id": 7,
+    "name": "Anurag",
+    "email": "anurag@gmail.com"
+  }
+]

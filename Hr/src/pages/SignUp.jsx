@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../services/chatService";
 
 const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [department, setDepartment] = useState("");
+  const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ name: "", email: "", password: "" });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const previous = document.body.style.backgroundColor;
@@ -26,7 +31,7 @@ const SignUp = () => {
     return !newErrors.name && !newErrors.email && !newErrors.password;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const robot = document.getElementById("robot");
     const isValid = validate();
@@ -35,12 +40,21 @@ const SignUp = () => {
       return;
     }
     if (isValid) {
-      alert("✅ Account created successfully!");
-      setName("");
-      setEmail("");
-      setPassword("");
-      setErrors({ name: "", email: "", password: "" });
-      if (typeof robot !== "undefined") robot.checked = false;
+      try {
+        const response = await authService.register(name, email, password, designation, department, phone);
+        if (response.success) {
+          // Clear form
+          setName(""); setEmail(""); setPassword(""); setDesignation(""); setDepartment(""); setPhone("");
+          setErrors({ name: "", email: "", password: "" });
+          if (typeof robot !== "undefined") robot.checked = false;
+          navigate("/dashboard");
+        } else {
+          alert(response.message || "Registration failed");
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        alert(error.response?.data?.message || "An error occurred during registration");
+      }
     }
   };
 
@@ -65,10 +79,35 @@ const SignUp = () => {
             </p>
 
             <form id="createAccountForm" className="space-y-4 relative z-10" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold mb-1 text-black">Name</label>
-                <input id="name" name="name" type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full max-w-[400px] border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" placeholder="Your name" />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[400px]">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-semibold mb-1 text-black">Name</label>
+                  <input id="name" name="name" type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Your name" />
+                  {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-semibold mb-1 text-black">Phone (Optional)</label>
+                  <input id="phone" name="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="+1234567890" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[400px]">
+                <div>
+                  <label htmlFor="designation" className="block text-sm font-semibold mb-1 text-black">Designation</label>
+                  <input id="designation" name="designation" type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="e.g. Developer" />
+                </div>
+                <div>
+                  <label htmlFor="department" className="block text-sm font-semibold mb-1 text-black">Department</label>
+                  <select id="department" name="department" value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full border border-gray-300 rounded-md p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <option value="">Select Dept</option>
+                    <option value="IT">IT</option>
+                    <option value="HR">HR</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Operations">Operations</option>
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -108,7 +147,7 @@ const SignUp = () => {
                 <label htmlFor="robot" className="text-sm text-black font-medium cursor-pointer">i am not a robot</label>
               </div>
 
-              <Link to={"/dashboard"}><button type="submit" className="w-full max-w-[400px] bg-[#4a2cf0] text-white py-2 rounded-md font-medium hover:bg-[#3a20d1] transition-all text-sm sm:text-base">create account</button></Link>
+              <button type="submit" className="w-full max-w-[400px] bg-[#4a2cf0] text-white py-2 rounded-md font-medium hover:bg-[#3a20d1] transition-all text-sm sm:text-base">create account</button>
 
               <p className="text-sm text-gray-800 text-center w-full max-w-[400px]">already have an account? <Link to="/login" className="font-bold text-black">log in</Link></p>
             </form>

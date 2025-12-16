@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../services/chatService";
 
 export default function LogPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const form = document.getElementById("loginForm");
     const emailInput = document.getElementById("Iemail");
@@ -11,14 +13,18 @@ export default function LogPage() {
     const emailError = document.getElementById("IemailError");
     const passwordError = document.getElementById("IpasswordError");
 
-    togglePassword.addEventListener("click", () => {
+    const togglePasswordHandler = () => {
       const type =
         passwordInput.getAttribute("type") === "password" ? "text" : "password";
       passwordInput.setAttribute("type", type);
       togglePassword.textContent = type === "password" ? "Show" : "Hide";
-    });
+    };
 
-    const submitHandler = (e) => {
+    if (togglePassword) {
+      togglePassword.addEventListener("click", togglePasswordHandler);
+    }
+
+    const submitHandler = async (e) => {
       e.preventDefault();
       let isValid = true;
 
@@ -30,10 +36,8 @@ export default function LogPage() {
         emailError.classList.add("hidden");
       }
 
-      const passwordPattern =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-      if (!passwordPattern.test(passwordInput.value.trim())) {
+      if (!passwordInput.value.trim()) {
+        passwordError.textContent = "Password is required";
         passwordError.classList.remove("hidden");
         isValid = false;
       } else {
@@ -41,20 +45,34 @@ export default function LogPage() {
       }
 
       if (isValid) {
-        alert("Login successful!");
-        form.reset();
-        navigate("/dashboard");
+        try {
+          const response = await authService.login(emailInput.value.trim(), passwordInput.value.trim());
+          if (response.success) {
+            form.reset();
+            navigate("/dashboard");
+          } else {
+            alert(response.message || "Login failed");
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          alert(error.response?.data?.message || "An error occurred during login");
+        }
       }
     };
 
-    form.addEventListener("submit", submitHandler);
+    if (form) {
+      form.addEventListener("submit", submitHandler);
+    }
 
     return () => {
-      togglePassword.replaceWith(togglePassword.cloneNode(true));
-      form.replaceWith(form.cloneNode(true));
-      form.removeEventListener("submit", submitHandler);
+      if (togglePassword) {
+        togglePassword.removeEventListener("click", togglePasswordHandler);
+      }
+      if (form) {
+        form.removeEventListener("submit", submitHandler);
+      }
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="relative min-h-screen w-screen flex items-center justify-center font-[Poppins] px-4 md:px-12 lg:px-24 py-12 bg-gray-50">
@@ -62,7 +80,7 @@ export default function LogPage() {
 
         {/* WATERMARK inside card — now moved up */}
         <img
-          src= "flower1.png"
+          src="flower1.png"
           alt="watermark"
           className="
             absolute left-1/2 
@@ -154,9 +172,9 @@ export default function LogPage() {
                 </a>
               </div>
 
-                <button className="mt-4 w-full rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-semibold hover:bg-blue-700">
-                    Log in
-                </button>
+              <button className="mt-4 w-full rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-semibold hover:bg-blue-700">
+                Log in
+              </button>
 
               <div className="text-sm text-gray-600">
                 Don't have an account?{" "}
