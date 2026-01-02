@@ -1,16 +1,42 @@
 import express from "express";
+<<<<<<< HEAD
 import { signup, login, logout, getAllUsers, updateUser, searchUsers, getProfile } from "../controller/user.controller.js";
+=======
+import { signup, login, logout, getAllUsers, getUserById, updateUser, addUser, deleteUser, getArchivedUsersController } from "../controller/user.controller.js";
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
 import { authMiddleware } from "../middleware/auth.middleware.js";
+
+import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
+// upload profile endpoint (multipart/form-data)
+router.post("/upload-profile", upload.single("profile"), (req, res) => {
+	try {
+		if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+		const filePath = `/assets/uploads/${req.file.filename}`;
+		res.status(201).json({ path: filePath });
+	} catch (err) {
+		console.error("Upload error", err);
+		res.status(500).json({ message: "Upload failed" });
+	}
+});
 router.post("/logout", authMiddleware, logout);
 router.get("/search", authMiddleware, searchUsers);
 router.get("/me", authMiddleware, getProfile);
 router.get("/", authMiddleware, getAllUsers);
+<<<<<<< HEAD
 router.put("/:id", authMiddleware, updateUser);
 router.get("/:id", authMiddleware, getProfile);
+=======
+// Admin: archived users (must come before param route '/:id')
+router.get('/archived', authMiddleware, getArchivedUsersController);
+router.get("/:id", authMiddleware, getUserById);
+router.put("/:id", authMiddleware, upload.single('profile_picture'), updateUser);
+router.post("/add", authMiddleware, addUser);
+router.delete("/:id", authMiddleware, deleteUser);
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
 
 export default router;

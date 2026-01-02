@@ -1,5 +1,7 @@
 import * as employeeOfMonthService from '../../services/employeeOfMonthService';
-import { Calendar, Clock, Trophy, Users, Plus, X, Trash2, Award, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Trophy, Users, Plus, X, Trash2, Award, ChevronRight, ArrowLeft } from 'lucide-react';
+import { getAllEvents } from '../../services/event.service';
+import { Link, useNavigate } from 'react-router-dom'
 
 const FeedPage3 = ({ onNavigateBack }) => {
     const [employeeData, setEmployeeData] = useState(null);
@@ -7,6 +9,9 @@ const FeedPage3 = ({ onNavigateBack }) => {
     const [showModal, setShowModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
+
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [userPoints, setUserPoints] = useState(0);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -16,7 +21,41 @@ const FeedPage3 = ({ onNavigateBack }) => {
         teamMembers: [{ userId: '', role: '' }]
     });
 
+    // Fetch user points and refresh on activity updates
     useEffect(() => {
+        const fetchUserPoints = async () => {
+            try {
+                const u = JSON.parse(localStorage.getItem('user') || '{}');
+                if (!u || !u.id) return;
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/users/${u.id}`, { headers: { Authorization: token ? `Bearer ${token}` : '' } });
+                if (!res.ok) return;
+                const data = await res.json();
+                setUserPoints(data.user?.points || 0);
+                if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+            } catch (err) {
+                console.error('Failed to fetch user points', err);
+            }
+        };
+        fetchUserPoints();
+        const onActivity = () => fetchUserPoints();
+        window.addEventListener('activity:updated', onActivity);
+        return () => window.removeEventListener('activity:updated', onActivity);
+    }, []);
+
+    const navigate = useNavigate();
+
+    const handleBack = () => {
+        if (onNavigateBack && typeof onNavigateBack === 'function') onNavigateBack();
+        navigate(-1);
+    };
+
+    useEffect(() => {
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            setIsAdmin(user.role === 'Admin');
+        }
         fetchEmployeeOfMonth();
     }, []);
 
@@ -56,6 +95,41 @@ const FeedPage3 = ({ onNavigateBack }) => {
         setShowModal(true);
         await fetchUsers();
     };
+
+    // Events for feed
+    const [events, setEvents] = useState([]);
+    const [eventsLoading, setEventsLoading] = useState(false);
+
+    const getEventCategory = (eventDate) => {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const eventDateObj = new Date(eventDate);
+        eventDateObj.setHours(0,0,0,0);
+        return eventDateObj >= today ? 'upcoming' : 'past';
+    };
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setEventsLoading(true);
+                const res = await getAllEvents();
+                const ev = Array.isArray(res) ? res : (res.events || res);
+                setEvents(ev || []);
+            } catch (err) {
+                console.error('Failed to fetch events', err);
+            } finally {
+                setEventsLoading(false);
+            }
+        };
+        fetchEvents();
+        const onEventsUpdated = () => fetchEvents();
+        window.addEventListener('events:updated', onEventsUpdated);
+        window.addEventListener('activity:updated', onEventsUpdated);
+        return () => {
+            window.removeEventListener('events:updated', onEventsUpdated);
+            window.removeEventListener('activity:updated', onEventsUpdated);
+        };
+    }, []);
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -144,17 +218,24 @@ const FeedPage3 = ({ onNavigateBack }) => {
         <div className="p-6 sm:p-10 max-w-[1600px] mx-auto min-h-screen">
             {/* Header */}
             <div className="flex items-center justify-between mb-10">
-                <div>
-                    <h1 className="text-3xl font-bold text-[#020839] tracking-tight">Feed & Recognition</h1>
-                    <p className="text-gray-500 mt-1">Celebrate success and stay updated with the team.</p>
+                <div className="flex items-center gap-4">
+                    <button onClick={handleBack} className="text-gray-500 hover:text-gray-700 p-2 rounded-lg" aria-label="Go back">
+                        <ArrowLeft size={20} />
+                    </button>
+                    <div>
+                        <h1 className="text-3xl font-bold text-[#020839] tracking-tight">Feed & Recognition</h1>
+                        <p className="text-gray-500 mt-1">Celebrate success and stay updated with the team.</p>
+                    </div>
                 </div>
-                <button
-                    onClick={handleOpenModal}
-                    className="bg-orange-500 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-sm flex items-center gap-2"
-                >
-                    <Plus size={20} />
-                    Add New
-                </button>
+                {isAdmin && (
+                    <button
+                        onClick={handleOpenModal}
+                        className="bg-orange-500 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-sm flex items-center gap-2"
+                    >
+                        <Plus size={20} />
+                        Add New
+                    </button>
+                )}
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -169,7 +250,7 @@ const FeedPage3 = ({ onNavigateBack }) => {
                         <>
                             {/* Employee of the Month Card */}
                             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 relative overflow-hidden group">
-                                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#020839] to-orange-500"></div>
+                                <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-[#020839] to-orange-500"></div>
 
                                 {/* Header */}
                                 <div className="flex justify-between items-start mb-8 z-10 relative">
@@ -182,6 +263,7 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                             <p className="text-sm text-gray-400 font-medium uppercase tracking-wider">{employeeData.month}</p>
                                         </div>
                                     </div>
+                                    {isAdmin && (
                                     <button
                                         onClick={handleDeleteEmployeeOfMonth}
                                         className="text-gray-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-colors"
@@ -189,6 +271,7 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                     >
                                         <Trash2 size={18} />
                                     </button>
+                                    )}  
                                 </div>
 
                                 {/* Featured Employee Content */}
@@ -228,12 +311,14 @@ const FeedPage3 = ({ onNavigateBack }) => {
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                         {employeeData.team.map((member) => (
                                             <div key={member.id} className="relative group bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-orange-200 transition-colors">
+                                                {isAdmin && (
                                                 <button
                                                     onClick={() => handleDeleteTeamMember(member.id)}
                                                     className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                                                 >
                                                     <X size={14} />
                                                 </button>
+                                                )} 
 
                                                 <div className="flex items-center gap-4">
                                                     <img
@@ -259,12 +344,16 @@ const FeedPage3 = ({ onNavigateBack }) => {
                             </div>
                             <h3 className="text-xl font-bold text-[#020839] mb-2">No Recognition Yet</h3>
                             <p className="text-gray-500 mb-8 max-w-sm mx-auto">Start celebrating your team's success by adding the first Employee of the Month.</p>
-                            <button
-                                onClick={handleOpenModal}
-                                className="bg-[#020839] text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-opacity-90 transition-all shadow-sm"
-                            >
-                                Recognize Someone
-                            </button>
+                            {isAdmin ? (
+                                <button
+                                    onClick={handleOpenModal}
+                                    className="bg-[#020839] text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-opacity-90 transition-all shadow-sm"
+                                >
+                                    Recognize Someone
+                                </button>
+                            ) : (
+                                <p className="text-sm text-gray-500">Only admins can create Employee of the Month entries. Contact your administrator if you need to recognize someone.</p>
+                            )}
                         </div>
                     )}
                 </div>
@@ -278,47 +367,53 @@ const FeedPage3 = ({ onNavigateBack }) => {
                             <div className="bg-orange-100 text-orange-700 text-xs font-bold px-2 py-1 rounded-md">NEW</div>
                         </div>
                         <div className="flex items-end gap-2 mb-4">
-                            <span className="text-4xl font-bold text-[#020839]">250</span>
+                            <span className="text-4xl font-bold text-[#020839]">{userPoints?.toLocaleString() || 0}</span>
                             <span className="text-sm text-gray-400 font-medium mb-1">pts available</span>
                         </div>
-                        <button className="w-full bg-[#020839] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-opacity-90 transition-all">
+                        <Link to="/redemption" className="w-full block bg-[#020839] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-opacity-90 transition-all text-center">
                             Redeem Rewards
-                        </button>
+                        </Link>
                     </div>
 
-                    {/* Upcoming Events */}
+                    {/* Upcoming Events (dynamic) */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
                             <Calendar size={18} className="text-orange-500" />
                             <h3 className="font-bold text-[#020839]">Upcoming Events</h3>
                         </div>
                         <div className="space-y-4">
-                            {[
-                                { title: "Team Building Workshop", time: "10:00 AM", date: "13 Oct", color: "bg-blue-500" },
-                                { title: "EOM Award Ceremony", time: "4:00 PM", date: "20 Oct", color: "bg-orange-500" },
-                                { title: "Town Hall Meeting", time: "2:00 PM", date: "10 Nov", color: "bg-purple-500" },
-                            ].map((event, idx) => (
-                                <div key={idx} className="flex items-start gap-3 group cursor-pointer">
-                                    <div className="flex flex-col items-center">
-                                        <div className={`w-2 h-2 rounded-full ${event.color} mt-1.5`}></div>
-                                        {idx !== 2 && <div className="w-0.5 h-full bg-gray-100 my-1"></div>}
-                                    </div>
-                                    <div className="flex-1 pb-2">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">{event.title}</p>
-                                            <span className="text-xs font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">{event.date}</span>
+                            {eventsLoading ? (
+                                <p className="text-sm text-gray-500">Loading events...</p>
+                            ) : events.filter(e => getEventCategory(e.event_date) === 'upcoming').length === 0 ? (
+                                <p className="text-sm text-gray-500">No upcoming events</p>
+                            ) : (
+                                events
+                                    .filter(e => getEventCategory(e.event_date) === 'upcoming')
+                                    .sort((a,b) => new Date(a.event_date) - new Date(b.event_date))
+                                    .slice(0,3)
+                                    .map((ev, idx) => (
+                                        <div key={ev.id || idx} className="flex items-start gap-3 group cursor-pointer">
+                                            <div className="flex flex-col items-center">
+                                                <div className={`w-2 h-2 rounded-full ${idx===0? 'bg-blue-500' : idx===1 ? 'bg-orange-500' : 'bg-purple-500'} mt-1.5`}></div>
+                                                {idx !== 2 && <div className="w-0.5 h-full bg-gray-100 my-1"></div>}
+                                            </div>
+                                            <div className="flex-1 pb-2">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">{ev.title}</p>
+                                                    <span className="text-xs font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">{`${ev.attendee_count ?? 0} attending`}</span>
+                                                </div>
+                                                <p className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <Clock size={10} />
+                                                    {ev.start_time || ''}{ev.end_time ? ` - ${ev.end_time}` : ''}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <p className="text-xs text-gray-500 flex items-center gap-1">
-                                            <Clock size={10} />
-                                            {event.time}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
+                                    ))
+                            )}
                         </div>
-                        <button className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-[#020839] flex items-center justify-center gap-1 uppercase tracking-wide transition-colors">
-                            View Calendar <ChevronRight size={12} />
-                        </button>
+                        <Link to="/event" className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-[#020839] flex items-center justify-center gap-1 uppercase tracking-wide transition-colors">
+                            View Events <ChevronRight size={12} />
+                        </Link>
                     </div>
                 </div>
             </div>

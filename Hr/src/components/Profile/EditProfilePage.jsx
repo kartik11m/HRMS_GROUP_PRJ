@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
+<<<<<<< HEAD
 import axios from 'axios';
+=======
+import React, { useEffect, useRef, useState } from 'react';
+import { Pencil, Camera, Trash2, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
 
 const EditProfilePage = ({ onCancel, onSave, profile }) => {
     const [formData, setFormData] = useState({
@@ -16,12 +22,103 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
         emergency_contact_relation: profile?.emergency_contact?.relation || ''
     });
 
+<<<<<<< HEAD
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+=======
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [designation, setDesignation] = useState('');
+    const [gender, setGender] = useState('');
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
+
+    const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        const fullname = storedUser?.fullname || '';
+        const parts = fullname.split(' ');
+        setFirstName(parts[0] || '');
+        setLastName(parts.slice(1).join(' ') || '');
+        setEmail(storedUser?.email || '');
+        setDesignation(storedUser?.designation || '');
+        setGender(storedUser?.gender || '');
+        // Use profile_picture if available, otherwise null
+        setPreviewUrl(storedUser?.profile_picture || null);
+    }, [storedUser]);
+
+    // ensure inputs are focusable
+    const firstNameRef = useRef(null);
+    useEffect(() => {
+        if (firstNameRef.current) {
+            firstNameRef.current.focus();
+        }
+        const onStorage = (e) => {
+            if (e.key === 'user') {
+                try { setStoredUser(JSON.parse(e.newValue)); } catch { setStoredUser(null); }
+            }
+        };
+        window.addEventListener('storage', onStorage);
+        return () => window.removeEventListener('storage', onStorage);
+    }, []);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setIsRemovingPhoto(false);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRemovePhoto = (e) => {
+        e.stopPropagation();
+        setSelectedFile(null);
+        setPreviewUrl(null); // Clear preview to show default icon
+        setIsRemovingPhoto(true);
+        // Clear file input so same file can be selected again if user changes mind immediately
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
+    const handleSave = async () => {
+        setSaving(true);
+        setError("");
+        setSuccess("");
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setError('You must be logged in to update your profile.');
+            setSaving(false);
+            return;
+        }
+        const id = storedUser?.id;
+        const fullname = `${firstName} ${lastName} `.trim();
+
+        const formData = new FormData();
+        formData.append('fullname', fullname);
+        formData.append('email', email);
+        formData.append('designation', designation);
+        formData.append('gender', gender || 'Not Specified');
+
+        if (isRemovingPhoto) {
+            formData.append('profile_picture', ""); // Send empty string to remove it
+        } else if (selectedFile) {
+            formData.append('profile_picture', selectedFile);
+        }
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
 
     const handleSubmit = async () => {
         try {
+<<<<<<< HEAD
             const token = localStorage.getItem('authToken') || localStorage.getItem('token');
             const dataToSend = {
                 fullname: formData.name,
@@ -35,6 +132,15 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
 
             await axios.put(`http://localhost:3000/api/users/${userId}`, dataToSend, {
                 headers: { Authorization: `Bearer ${token}` }
+=======
+            // Note: When using FormData, do NOT set Content-Type header manually, let browser set it with boundary
+            const res = await fetch(`http://localhost:3000/api/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
             });
 
             // Update localStorage if it's the current user
@@ -44,10 +150,31 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
                 localStorage.setItem('user', JSON.stringify(updatedUser));
             }
 
+<<<<<<< HEAD
             onSave(dataToSend);
         } catch (error) {
             console.error('Error updating profile:', error);
             alert('Failed to update profile');
+=======
+            // update localStorage and navigate back to profile
+            // Ensure we merge existing user data with updates to keep other fields valid
+            const newUser = { ...storedUser, ...data.user };
+            localStorage.setItem('user', JSON.stringify(newUser));
+
+            // Dispatch event so Sidebar updates immediately
+            window.dispatchEvent(new Event("user-updated"));
+
+            if (onSave) onSave(newUser);
+            setSuccess('Profile updated successfully');
+
+            // reflect change immediately
+            setTimeout(() => window.location.href = '/profile', 800);
+        } catch (err) {
+            console.error('Update error:', err);
+            setError(err.message || 'Failed to update profile');
+        } finally {
+            setSaving(false);
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
         }
     };
 
@@ -58,6 +185,7 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
             <h1 className="text-3xl font-bold text-gray-900 border-b-2 border-gray-900 inline-block mb-12 pb-1">Edit Profile</h1>
 
             <div className="flex flex-col items-center mb-12">
+<<<<<<< HEAD
                 <div className="relative">
                     <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200">
                         {profile.avatar || profile.profile_picture ? (
@@ -70,10 +198,49 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
                             <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold text-4xl">
                                 {(formData.name || '').charAt(0)}
                             </div>
+=======
+                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg relative flex items-center justify-center">
+                        {previewUrl ? (
+                            <img src={previewUrl} alt="avatar" className="w-full h-full object-cover" />
+                        ) : (
+                            <User size={64} className="text-gray-400" />
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
                         )}
                     </div>
+
+                    {/* Overlay for hover effect */}
+                    <div className="absolute inset-0 bg-black bg-opacity-30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Camera className="text-white w-8 h-8" />
+                    </div>
+
+                    <div className="absolute bottom-0 right-0 bg-[#266ECD] p-2 rounded-full border-2 border-white text-white z-10">
+                        <Pencil size={16} />
+                    </div>
+
+                    {/* Delete Button */}
+                    <button
+                        type="button"
+                        onClick={handleRemovePhoto}
+                        className="absolute top-0 right-0 bg-red-500 p-2 rounded-full border-2 border-white text-white hover:bg-red-600 transition z-20"
+                        title="Remove photo"
+                    >
+                        <Trash2 size={16} />
+                    </button>
                 </div>
+<<<<<<< HEAD
                 <h2 className="text-xl font-bold text-gray-900 mt-4">{formData.name}</h2>
+=======
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                />
+
+                <h2 className="text-xl font-bold text-gray-900 mt-4">{firstName} {lastName}</h2>
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
             </div>
 
             <div className="space-y-6 max-w-2xl mx-auto">
@@ -136,6 +303,16 @@ const EditProfilePage = ({ onCancel, onSave, profile }) => {
                             onChange={handleChange}
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs text-gray-500 mb-1">Gender</label>
+                        <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent">
+                            <option value="">Prefer not to say</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
                 </div>
 

@@ -1,14 +1,50 @@
 import bcrypt from "bcrypt";
 import { createUser, findUserByEmail, findUserById, updateUser } from "../models/user.model.js";
 
+<<<<<<< HEAD
 export const createUserService = async (fullname, email, password, designation = '', department = '', phone = '') => {
+=======
+export const createUserService = async (
+    fullname,
+    email,
+    password,
+    designation = '',
+    job_title = '',
+    department = '',
+    phone = '',
+    date_of_joining = null,
+    employee_id = '',
+    profile_picture = '',
+    status = 'ACTIVE',
+    role = 'Employee',
+    gender = 'Not Specified'
+) => {
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
         throw new Error("User already exists");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+<<<<<<< HEAD
     const newUser = await createUser(fullname, email, hashedPassword, designation, department, phone);
+=======
+    const newUser = await createUser(
+        fullname,
+        email,
+        hashedPassword,
+        designation,
+        job_title,
+        department,
+        phone,
+        date_of_joining,
+        employee_id,
+        profile_picture,
+        status,
+        role,
+        gender
+    );
+>>>>>>> af8e894881da2d14929bcae57d583ad190a15920
 
     return newUser;
 };
