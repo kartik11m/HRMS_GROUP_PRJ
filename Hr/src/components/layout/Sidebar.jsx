@@ -40,27 +40,27 @@ function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 h-screen fixed left-0 top-0 bg-[#020839] text-white p-6">
+    <aside className="w-64 h-screen fixed left-0 top-0 bg-[#020839] dark:bg-[#2C50AB] text-white dark:text-[#AACCFF] p-6 transition-colors duration-300">
 
       {/* LOGO */}
-      <h1 className="text-3xl font-bold mb-8 tracking-wide">HRMS</h1>
+      <h1 className="text-3xl font-bold mb-8 tracking-wide text-white dark:text-[#AACCFF]">HRMS</h1>
 
       {/* PROFILE */}
       <div className="flex items-center gap-3 mb-10">
         {avatarSrc ? (
           <img
             src={avatarSrc}
-            className="w-14 h-14 rounded-full object-cover border-2 border-white/20"
+            className="w-14 h-14 rounded-full object-cover border-2 border-white/20 dark:border-[#AACCFF]/30"
             alt={fullname}
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-white/80 border-2 border-white/20">
+          <div className="w-14 h-14 rounded-full bg-white/10 dark:bg-[#88AAFF]/20 flex items-center justify-center text-white/80 dark:text-[#AACCFF] border-2 border-white/20 dark:border-[#AACCFF]/30">
             <User size={24} />
           </div>
         )}
 
         <div className="min-w-0">
-          <p className="font-semibold truncate max-w-[140px]">{fullname}</p>
+          <p className="font-semibold truncate max-w-[140px] text-white dark:text-[#AACCFF]">{fullname}</p>
           <p className="text-sm opacity-70 capitalize truncate max-w-[140px]">{designation}</p>
         </div>
       </div>
@@ -73,9 +73,9 @@ function Sidebar() {
             <li key={item.name}>
               <Link
                 to={item.path}
-                className={`block px-4 py-2 rounded-lg font-medium ${isActive
-                  ? "bg-white text-[#020839]"
-                  : "text-white hover:bg-[#1e276d]"
+                className={`block px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${isActive
+                  ? "bg-white dark:bg-[#AACCFF] text-[#020839] dark:text-[#2C50AB]"
+                  : "text-white dark:text-[#AACCFF] hover:bg-[#1e276d] dark:hover:bg-[#88AAFF] dark:hover:text-[#0C1014]"
                   }`}
               >
                 {item.name}

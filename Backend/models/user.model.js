@@ -17,6 +17,27 @@ export const createUserTable = async () => {
   `;
   try {
     await pool.query(query);
+
+    // Migration: If old 'name' column exists, rename it to 'fullname'
+    const columnCheck = await pool.query(`
+      SELECT column_name FROM information_schema.columns 
+      WHERE table_name = 'users' AND column_name = 'name'
+    `);
+
+    if (columnCheck.rows.length > 0) {
+      // Check if fullname already exists
+      const fullnameCheck = await pool.query(`
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'fullname'
+      `);
+
+      if (fullnameCheck.rows.length === 0) {
+        // Rename 'name' to 'fullname'
+        await pool.query(`ALTER TABLE users RENAME COLUMN name TO fullname`);
+        console.log("✅ Migrated 'name' column to 'fullname'");
+      }
+    }
+
     // Ensure columns exist for older databases
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS designation VARCHAR(100) DEFAULT ''`);
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS department VARCHAR(100) DEFAULT ''`);

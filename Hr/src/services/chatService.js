@@ -6,6 +6,7 @@ export const authService = {
         const response = await api.post('/users/signup', { name, email, password, designation, department, phone });
         if (response.data.success || response.data.token) {
             localStorage.setItem('authToken', response.data.token);
+            localStorage.setItem('token', response.data.token); // For ProtectedRoute compatibility
             localStorage.setItem('user', JSON.stringify(response.data.user));
         }
         return response.data;
@@ -15,6 +16,7 @@ export const authService = {
         const response = await api.post('/users/login', { email, password });
         if (response.data.success || response.data.token) {
             localStorage.setItem('authToken', response.data.token);
+            localStorage.setItem('token', response.data.token); // For ProtectedRoute compatibility
             localStorage.setItem('user', JSON.stringify(response.data.user));
         }
         return response.data;
@@ -23,6 +25,7 @@ export const authService = {
     logout: async () => {
         await api.post('/users/logout');
         localStorage.removeItem('authToken');
+        localStorage.removeItem('token'); // For ProtectedRoute compatibility
         localStorage.removeItem('user');
     },
 

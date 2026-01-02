@@ -1,18 +1,65 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   font-family: 'Inter', sans-serif;
+
+  /* Light Theme Variables */
+  --sidebar-bg: #020839;
+  --sidebar-hover: #1e276d;
+  --sidebar-text: #ffffff;
+  --body-bg: #f9fafb;
+  --chat-bg: #e5ddd5;
+  --chat-sidebar-bg: #ffffff;
+  --chat-header-bg: #ffffff;
+  --chat-input-bg: #f0f2f5;
+  --message-own-bg: #dcf8c6;
+  --message-received-bg: #ffffff;
+  --message-text: #1f2937;
+  --separator-color: #e5e7eb;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+/* Dark Theme Variables */
+.dark {
+  --sidebar-bg: #2C50AB;
+  --sidebar-hover: #88AAFF;
+  --sidebar-text: #AACCFF;
+  --body-bg: #0C1014;
+  --chat-bg: #0C1014;
+  --chat-sidebar-bg: #0C1014;
+  --chat-header-bg: #0C1014;
+  --chat-input-bg: #0C1014;
+  --message-own-bg: #005c4b;
+  --message-received-bg: #262626;
+  --message-text: #e5e7eb;
+  --separator-color: #1F2429;
+  --text-primary: #AACCFF;
+  --text-secondary: #88AAFF;
+  --border-color: #1F2429;
 }
 
 body {
-  background-color: #f9fafb; /* Light gray neutral background */
+  background-color: var(--body-bg);
+  transition: background-color 0.3s ease;
 }
+
+.dark body,
+body.dark {
+  background-color: #0C1014;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

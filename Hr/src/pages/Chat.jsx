@@ -313,22 +313,22 @@ const Chat = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-100">
+      <div className="flex h-screen items-center justify-center bg-gray-100 dark:bg-[#0C1014] transition-colors duration-300">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading chat...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 dark:border-[#88AAFF] mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-[#AACCFF]">Loading chat...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className={`${chatListOpen ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 overflow-y-auto`}>
-        <div className="p-4 border-b border-gray-200 sticky top-0 bg-white">
+    <div className="flex h-screen bg-gray-100 dark:bg-[#0C1014] transition-colors duration-300">
+      <div className={`${chatListOpen ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white dark:bg-[#0C1014] border-r border-gray-200 dark:border-[#1F2429] overflow-y-auto transition-colors duration-300`}>
+        <div className="p-4 border-b border-gray-200 dark:border-[#1F2429] sticky top-0 bg-white dark:bg-[#0C1014] transition-colors duration-300">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Messages</h2>
-            <button onClick={() => setChatListOpen(false)} className="md:hidden text-gray-600">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-[#AACCFF]">Messages</h2>
+            <button onClick={() => setChatListOpen(false)} className="md:hidden text-gray-600 dark:text-[#88AAFF]">
               <svg className="w-6 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -339,7 +339,7 @@ const Chat = () => {
         {/* Search */}
         <div className="px-5 py-4 shrink-0">
           <div className="relative group">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-[#88AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
@@ -347,36 +347,36 @@ const Chat = () => {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search users..."
-              className="bg-transparent ml-2 w-full text-sm outline-none text-gray-600 placeholder-gray-400 pl-6"
+              className="bg-transparent ml-2 w-full text-sm outline-none text-gray-600 dark:text-[#AACCFF] placeholder-gray-400 dark:placeholder-[#88AAFF]/60 pl-6"
             />
           </div>
         </div>
 
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-[#1F2429]">
           {searchQuery ? (
             <div>
               {searchResults.length === 0 ? (
-                <div className="p-4 text-center text-gray-500 text-sm">
+                <div className="p-4 text-center text-gray-500 dark:text-[#88AAFF] text-sm">
                   {isSearching ? 'Searching...' : 'No users found'}
                 </div>
               ) : (
                 <>
-                  <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <div className="px-4 py-2 bg-gray-50 dark:bg-[#1F2429] text-xs font-semibold text-gray-500 dark:text-[#88AAFF] uppercase tracking-wider">
                     Search Results
                   </div>
                   {searchResults.map((user) => (
                     <button
                       key={user.id}
                       onClick={() => handleUserSelect(user)}
-                      className="w-full p-2.5 text-left hover:bg-gray-50 transition-colors"
+                      className="w-full p-2.5 text-left hover:bg-gray-50 dark:hover:bg-[#88AAFF]/10 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white flex items-center justify-center font-semibold shrink-0 text-sm">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-800 truncate text-sm">{user.name}</h3>
-                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                          <h3 className="font-semibold text-gray-800 dark:text-[#AACCFF] truncate text-sm">{user.name}</h3>
+                          <p className="text-xs text-gray-500 dark:text-[#88AAFF] truncate">{user.email}</p>
                         </div>
                       </div>
                     </button>
@@ -386,7 +386,7 @@ const Chat = () => {
             </div>
           ) : (
             conversations.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-gray-500 dark:text-[#88AAFF]">
                 <p>No conversations yet</p>
                 <p className="text-sm mt-2">Search for a user to start chatting</p>
               </div>
@@ -395,24 +395,24 @@ const Chat = () => {
                 <button
                   key={conv.id}
                   onClick={() => handleSelectChat(conv.id)}
-                  className={`w-full p-2.5 text-left transition-colors ${selectedChat === conv.id ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
+                  className={`w-full p-2.5 text-left transition-colors ${selectedChat === conv.id ? 'bg-blue-50 dark:bg-[#88AAFF]/20' : 'hover:bg-gray-50 dark:hover:bg-[#88AAFF]/10'}`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-semibold shrink-0 text-sm">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 dark:from-[#2C50AB] dark:to-[#88AAFF] text-white flex items-center justify-center font-semibold shrink-0 text-sm">
                       {conv.avatar}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-semibold text-gray-800 truncate text-sm">{conv.name}</h3>
+                        <h3 className="font-semibold text-gray-800 dark:text-[#AACCFF] truncate text-sm">{conv.name}</h3>
                         {conv.status === 'online' && (
                           <div className="w-2 h-2 bg-green-500 rounded-full shrink-0"></div>
                         )}
                       </div>
-                      <p className="text-xs text-gray-600 truncate">{conv.lastMessage || 'No messages yet'}</p>
+                      <p className="text-xs text-gray-600 dark:text-[#88AAFF]/80 truncate">{conv.lastMessage || 'No messages yet'}</p>
                       <div className="flex items-center justify-between mt-0.5">
-                        <p className="text-xs text-gray-500">{formatTime(conv.lastMessageTime)}</p>
+                        <p className="text-xs text-gray-500 dark:text-[#88AAFF]/60">{formatTime(conv.lastMessageTime)}</p>
                         {conv.unreadCount > 0 && (
-                          <div className="w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0"></div>
+                          <div className="w-2.5 h-2.5 bg-blue-500 dark:bg-[#88AAFF] rounded-full shrink-0"></div>
                         )}
                       </div>
                     </div>
@@ -424,33 +424,33 @@ const Chat = () => {
         </div>
       </div>
 
-      <div className={`${chatListOpen ? 'hidden' : 'flex'} md:flex flex-1 flex-col bg-[#e5ddd5]`}>
+      <div className={`${chatListOpen ? 'hidden' : 'flex'} md:flex flex-1 flex-col bg-[#e5ddd5] dark:bg-[#0C1014] transition-colors duration-300`}>
         {selectedChatData ? (
           <>
-            <div className="border-b border-gray-200 p-3 md:p-4 flex items-center justify-between bg-white sticky top-0 z-10 shadow-sm">
+            <div className="border-b border-gray-200 dark:border-[#1F2429] p-3 md:p-4 flex items-center justify-between bg-white dark:bg-[#0C1014] sticky top-0 z-10 shadow-sm dark:shadow-none transition-colors duration-300">
               <div className="flex items-center gap-2 md:gap-3 min-w-0">
-                <button onClick={() => setChatListOpen(true)} className="md:hidden text-gray-600 shrink-0">
+                <button onClick={() => setChatListOpen(true)} className="md:hidden text-gray-600 dark:text-[#88AAFF] shrink-0">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 text-white flex items-center justify-center font-semibold shrink-0 text-sm md:text-base">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 dark:from-[#2C50AB] dark:to-[#88AAFF] text-white flex items-center justify-center font-semibold shrink-0 text-sm md:text-base">
                   {selectedChatData?.avatar}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-gray-800 truncate text-sm md:text-base">{selectedChatData?.name}</h3>
-                  <p className="text-xs md:text-sm text-gray-500 truncate">
+                  <h3 className="font-semibold text-gray-800 dark:text-[#AACCFF] truncate text-sm md:text-base">{selectedChatData?.name}</h3>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-[#88AAFF] truncate">
                     {selectedChatData?.status === 'online' ? 'Online' : 'Offline'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 md:gap-4 shrink-0">
-                <button className="text-gray-600 hover:text-gray-800 p-1 md:p-2">
+                <button className="text-gray-600 dark:text-[#88AAFF] hover:text-gray-800 dark:hover:text-[#AACCFF] p-1 md:p-2">
                   <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </button>
-                <button className="text-gray-600 hover:text-gray-800 p-1 md:p-2">
+                <button className="text-gray-600 dark:text-[#88AAFF] hover:text-gray-800 dark:hover:text-[#AACCFF] p-1 md:p-2">
                   <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                   </svg>
@@ -458,9 +458,9 @@ const Chat = () => {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-2 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-2 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] dark:bg-none dark:bg-[#0C1014] bg-repeat transition-colors duration-300">
               {messages.length === 0 ? (
-                <div className="text-center text-gray-500 py-8 bg-white/80 rounded-lg mx-auto max-w-sm mt-10 shadow-sm">
+                <div className="text-center text-gray-500 dark:text-[#88AAFF] py-8 bg-white/80 dark:bg-[#1F2429] rounded-lg mx-auto max-w-sm mt-10 shadow-sm">
                   <p>No messages yet</p>
                   <p className="text-sm mt-2">Send a message to start the conversation</p>
                 </div>
@@ -470,8 +470,8 @@ const Chat = () => {
                   return (
                     <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[85%] md:max-w-[70%] rounded-lg px-3 py-2 shadow-sm ${isOwn
-                        ? 'bg-[#dcf8c6] text-gray-900 rounded-tr-none'
-                        : 'bg-white text-gray-900 rounded-tl-none'
+                        ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-gray-900 dark:text-white rounded-tr-none'
+                        : 'bg-white dark:bg-[#262626] text-gray-900 dark:text-[#AACCFF] rounded-tl-none'
                         } ${msg.sending ? 'opacity-70' : ''} ${msg.failed ? 'border border-red-500' : ''}`}>
 
                         <p className="text-[14px] leading-[19px] break-words pr-16 min-h-[19px]">
@@ -479,7 +479,7 @@ const Chat = () => {
                         </p>
 
                         <div className="flex items-center justify-end gap-1 mt-1">
-                          <span className="text-[11px] text-gray-600 leading-none">
+                          <span className="text-[11px] text-gray-600 dark:text-gray-400 leading-none">
                             {formatTime(msg.created_at)}
                           </span>
                           {isOwn && (
@@ -491,7 +491,7 @@ const Chat = () => {
                         </div>
 
                         {msg.failed && (
-                          <p className="text-[10px] text-red-600 mt-1">Failed</p>
+                          <p className="text-[10px] text-red-600 dark:text-red-400 mt-1">Failed</p>
                         )}
                       </div>
                     </div>
@@ -501,7 +501,7 @@ const Chat = () => {
 
               {Object.keys(typingUsers).length > 0 && (
                 <div className="flex justify-start">
-                  <div className="bg-white text-gray-600 rounded-lg px-4 py-2 text-sm italic shadow-sm">
+                  <div className="bg-white dark:bg-[#262626] text-gray-600 dark:text-[#88AAFF] rounded-lg px-4 py-2 text-sm italic shadow-sm">
                     {Object.values(typingUsers)[0]} is typing...
                   </div>
                 </div>
@@ -510,27 +510,27 @@ const Chat = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-2 md:p-3 bg-[#f0f2f5] flex items-center gap-2">
-              <button className="text-gray-500 hover:text-gray-600 p-2 rounded-full hover:bg-gray-200 transition-colors">
+            <div className="p-2 md:p-3 bg-[#f0f2f5] dark:bg-[#0C1014] flex items-center gap-2 border-t border-transparent dark:border-[#1F2429] transition-colors duration-300">
+              <button className="text-gray-500 dark:text-[#88AAFF] hover:text-gray-600 dark:hover:text-[#AACCFF] p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#1F2429] transition-colors">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h6v2h-6v6h-2v-6H5v-2h6z" />
                 </svg>
               </button>
 
-              <div className="flex-1 bg-white rounded-full flex items-center px-4 py-2 shadow-sm border border-gray-200">
+              <div className="flex-1 bg-white dark:bg-[#1F2429] rounded-full flex items-center px-4 py-2 shadow-sm border border-gray-200 dark:border-[#1F2429] transition-colors duration-300">
                 <input
                   type="text"
                   value={inputMessage}
                   onChange={handleInputChange}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Type a message"
-                  className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-500"
+                  className="flex-1 bg-transparent outline-none text-sm text-gray-800 dark:text-[#AACCFF] placeholder-gray-500 dark:placeholder-[#88AAFF]/60"
                 />
               </div>
 
               <button
                 onClick={handleSendMessage}
-                className="p-3 bg-[#00a884] text-white rounded-full hover:bg-[#008f6f] transition-colors shadow-sm flex items-center justify-center"
+                className="p-3 bg-[#00a884] dark:bg-[#2C50AB] text-white rounded-full hover:bg-[#008f6f] dark:hover:bg-[#88AAFF] transition-colors shadow-sm flex items-center justify-center"
               >
                 {inputMessage.trim() ? (
                   <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
@@ -546,9 +546,9 @@ const Chat = () => {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-[#f0f2f5]">
+          <div className="flex-1 flex items-center justify-center bg-[#f0f2f5] dark:bg-[#0C1014] transition-colors duration-300">
             <div className="text-center">
-              <p className="text-gray-500 text-sm">Select a conversation to start messaging</p>
+              <p className="text-gray-500 dark:text-[#88AAFF] text-sm">Select a conversation to start messaging</p>
             </div>
           </div>
         )}

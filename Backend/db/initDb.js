@@ -1,8 +1,14 @@
 import pool from "../db/db.js";
+import { createUserTable } from "../models/user.model.js";
+import { createBlacklistTable } from "../models/blacklistedTokens.js";
 
 // Initialize the database by creating necessary tables for the ATS system
 export const initDb = async () => {
   try {
+    // Initialize users table with migration support
+    await createUserTable();
+    // Initialize blacklisted tokens table for auth
+    await createBlacklistTable();
     // Create Jobs table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS jobs (
@@ -14,7 +20,7 @@ export const initDb = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-     // Create Applications table 
+    // Create Applications table 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS applications (
         id SERIAL PRIMARY KEY,
@@ -26,7 +32,7 @@ export const initDb = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-     // Create Interviews table 
+    // Create Interviews table 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS interviews (
         id SERIAL PRIMARY KEY,
@@ -37,7 +43,7 @@ export const initDb = async () => {
         mode VARCHAR(20)
       );
     `);
-     // Create Offer Letters table 
+    // Create Offer Letters table 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS offer_letters (
         id SERIAL PRIMARY KEY,
