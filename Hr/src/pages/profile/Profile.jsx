@@ -21,7 +21,7 @@ const Profile = () => {
     };
 
     return (
-        <div className="bg-white min-h-screen">
+        <div className="bg-white dark:bg-slate-800 dark:text-gray-100 min-h-screen">
             {isEditing ? (
                 <EditProfilePage onCancel={handleCancelEdit} onSave={handleSaveProfile} />
             ) : (

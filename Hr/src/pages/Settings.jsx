@@ -44,7 +44,6 @@ const SettingsPage = () => {
 
   const settingsItems = [
     { icon: <Bell size={22} />, label: 'Notification', hasToggle: true, toggleState: notifications, onToggle: () => setNotifications(!notifications) },
-    // Updated the Dark Mode item to use our new handler
     { icon: <Moon size={22} />, label: 'Dark Mode', hasToggle: true, toggleState: darkMode, onToggle: handleThemeToggle },
     { icon: <Star size={22} />, label: 'Rate App', path: '/settings/rate' },
     { icon: <LinkIcon size={22} />, label: 'Share Link' },
@@ -57,52 +56,69 @@ const SettingsPage = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8 mt-5">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-brand-text">Settings</h1>
-        <p className="text-gray-500 dark:text-brand-primary mt-1">Manage your application preferences</p>
-      </div>
+    <div className="min-h-screen transition-colors duration-300 dark:bg-slate-800 p-4 sm:p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8 mt-5">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100">Settings</h1>
+          <p className="text-gray-500 dark:text-slate-400 mt-1">Manage your application preferences</p>
+        </div>
 
-      <div className="bg-white dark:bg-darkbg-card rounded-xl shadow-md border border-gray-200 dark:border-darkbg-border overflow-hidden">
-        {settingsItems.map((item, index) => (
-          <div
-            key={index}
-            className={`flex items-center justify-between px-6 py-4 ${index !== settingsItems.length - 1 ? 'border-b border-gray-100 dark:border-darkbg-border' : ''
-              } ${item.isLogout ? 'hover:bg-red-50 cursor-pointer' : 'hover:bg-gray-50 dark:hover:bg-darkbg-page cursor-pointer'}`}
-            onClick={async (e) => {
-              if (item.hasToggle || item.onToggle) return;
-              if (item.path) return navigate(item.path);
-              if (item.isLogout) {
-                // ... logout logic ...
-              }
-            }}
-          >
-            <div className="flex items-center">
-              <div className={`p-2 rounded-lg mr-4 ${item.isLogout ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
-                {item.icon}
-              </div>
-              <span className={`font-medium ${item.isLogout ? 'text-red-600' : 'text-gray-700 dark:text-brand-text'}`}>
-                {item.label}
-              </span>
-            </div>
-
-            <div className="flex items-center">
-              {item.hasToggle ? (
-                <div
-                  className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors ${item.toggleState ? 'bg-blue-500' : 'bg-gray-300'}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    item.onToggle();
-                  }}
-                >
-                  <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${item.toggleState ? 'left-7' : 'left-1'}`}></div>
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-300">
+          {settingsItems.map((item, index) => (
+            <div
+              key={index}
+              className={`flex items-center justify-between px-6 py-4 ${
+                index !== settingsItems.length - 1 ? 'border-b border-gray-100 dark:border-slate-800' : ''
+              } ${
+                item.isLogout 
+                  ? 'hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer' 
+                  : 'hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer'
+              } transition-colors duration-200`}
+              onClick={async (e) => {
+                if (item.hasToggle || item.onToggle) return;
+                if (item.path) return navigate(item.path);
+                if (item.isLogout) {
+                  // ... logout logic ...
+                }
+              }}
+            >
+              <div className="flex items-center">
+                <div className={`p-2 rounded-lg mr-4 ${
+                  item.isLogout 
+                    ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' 
+                    : 'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-slate-300'
+                }`}>
+                  {item.icon}
                 </div>
-              ) : (
-                <ChevronRight size={20} className="text-gray-400" />
-              )}
+                <span className={`font-medium ${
+                  item.isLogout ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-slate-200'
+                }`}>
+                  {item.label}
+                </span>
+              </div>
+
+              <div className="flex items-center">
+                {item.hasToggle ? (
+                  <div
+                    className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors ${
+                      item.toggleState ? 'bg-blue-500' : 'bg-gray-300 dark:bg-slate-600'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      item.onToggle();
+                    }}
+                  >
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                      item.toggleState ? 'left-7' : 'left-1'
+                    }`}></div>
+                  </div>
+                ) : (
+                  <ChevronRight size={20} className="text-gray-400 dark:text-slate-500" />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

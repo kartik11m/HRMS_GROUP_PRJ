@@ -41,16 +41,16 @@ const ProfileUploads = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-6 mt-5">
-        <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-100">
-          <ArrowLeft />
+        <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-300 hover:dark:bg-gray-900">
+          <ArrowLeft className='dark:text-gray-100' />
         </button>
-        <h1 className="text-2xl font-semibold">My Uploads</h1>
+        <h1 className="text-2xl dark:text-gray-100 font-semibold">My Uploads</h1>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+      <div className="bg-white dark:bg-slate-900 dark:text-gray-100 rounded-xl shadow-md border border-gray-200 p-6">
         <div className="flex gap-2 items-center mb-4">
           <input type="file" onChange={onChange} />
-          <button onClick={upload} disabled={!selected || uploading} className="px-4 py-2 bg-blue-600 text-white rounded-md">{uploading ? 'Uploading...' : 'Upload'}</button>
+          <button onClick={upload} disabled={!selected || uploading} className="px-4 py-2 bg-[#2C50AB] hover:bg-[#3b62c7] text-white rounded-md">{uploading ? 'Uploading...' : 'Upload'}</button>
         </div>
 
         {files.length === 0 ? (

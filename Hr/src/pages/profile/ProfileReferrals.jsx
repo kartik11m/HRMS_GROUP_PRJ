@@ -17,20 +17,20 @@ const ProfileReferrals = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-6 mt-5">
-        <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-100">
-          <ArrowLeft />
+        <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-300 hover:dark:bg-gray-900">
+          <ArrowLeft className='dark:text-gray-100' />
         </button>
-        <h1 className="text-2xl font-semibold">My Referrals</h1>
+        <h1 className="text-2xl dark:text-gray-100 font-semibold">My Referrals</h1>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+      <div className="bg-white dark:bg-slate-900 dark:text-gray-100 rounded-xl shadow-md border border-gray-200 p-6">
         <div className="space-y-3">
           <div>
             {list.map((r, i) => (
               <div key={i} className="flex items-center justify-between py-2 border-b last:border-b-0">
                 <div>
-                  <div className="font-medium">{r.name}</div>
-                  <div className="text-sm text-gray-500">{r.email}</div>
+                  <div className="font-medium dark:text-gray-100">{r.name}</div>
+                  <div className="text-sm dark:text-gray-100">{r.email}</div>
                 </div>
               </div>
             ))}

@@ -25,15 +25,15 @@ const ProfileFeed = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-6 mt-5">
-        <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-100">
-          <ArrowLeft />
+        <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-300 hover:dark:bg-gray-900">
+          <ArrowLeft className='dark:text-gray-100' />
         </button>
-        <h1 className="text-2xl font-semibold">Latest Feed</h1>
+        <h1 className="text-2xl dark:text-gray-100 font-semibold">Latest Feed</h1>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+      <div className="bg-white dark:bg-slate-900 dark:text-gray-100 rounded-xl shadow-md border border-gray-200 p-6">
         {activities.length === 0 ? (
-          <p className="text-gray-600">No recent activity.</p>
+          <p className="text-gray-600 dark:text-gray-100">No recent activity.</p>
         ) : (
           activities.map(item => (
             <div key={item.id} className="border-b last:border-b-0 py-3">

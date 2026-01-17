@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import people from "../../assets/people.png";
-import { Heart, LogOut, Settings, UserPlus, User,} from "lucide-react";
+import { Heart, LogOut, Settings, UserPlus, User, } from "lucide-react";
 
 const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
   const [user, setUser] = useState(() => {
@@ -117,18 +117,18 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200 p-6 sm:p-10">
+    <div className="min-h-screen from-gray-100 to-gray-200 dark:bg-slate-800 dark:from-slate-900 dark:to-slate-800 dark:text-gray-100 p-6 sm:p-10">
       <div className="w-full mx-auto">
         {/* HEADER */}
         <div className="flex justify-between">
-            {/* <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-100">
+          {/* <button onClick={() => navigate(-1)} className="p-2 mr-4 rounded-md hover:bg-gray-100">
               <ArrowLeft />
             </button>
             <div>
               <h1 className="text-xl font-bold text-gray-900 tracking-tight">My Profile</h1>
               <p className="text-gray-600 leading-tigh">Manage your personal information & settings</p>
             </div> */}
-            <h2 className="text-2xl font-semibold mb-4">👋 Greetings, {userData.fullname}</h2>
+          <h2 className="text-2xl font-semibold mb-4">👋 Greetings, {userData.fullname}</h2>
           {/* <button className="inline-flex items-center gap-1 bg-[#ff5b5b] text-black text-sm font-semibold px-5 py-0.5 mr-0.5 rounded-full leading-none hover:bg-[#ff4a4a] active:scale-95 transition cursor-pointer"
             onClick={async () => {
               const { logout } = await import("../../services/auth.service.js");
@@ -148,10 +148,14 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
           <div className="flex-1 space-y-8">
 
             {/* PROFILE CARD */}
-            <section className="bg-[#E5F4FF] p-6 rounded-xl shadow-md">
+            <section className="bg-white bg-linear-to-b from-[#DCEFFD] to-[#B6D9F3]
+    dark:bg-none dark:bg-slate-900 p-6 rounded-xl shadow-xl border border-[#ddeeff] dark:border-slate-800">
               <div className="flex flex-col lg:flex-row gap-6 items-start">
                 {/* Avatar, info */}
-                <div className="w-32 h-32 rounded-full overflow-hidden shadow-lg ring-4 ring-blue-200 flex items-center justify-center bg-gray-100">
+                <div className="w-32 h-32 rounded-full overflow-hidden shadow-lg
+    ring-4 ring-blue-200 dark:ring-white/20
+    flex items-center justify-center
+    bg-gray-100 dark:bg-white/10">
                   {userData.avatar && userData.avatar !== "https://i.pravatar.cc/150?img=5" ? (
                     <img
                       src={userData.avatar}
@@ -159,7 +163,7 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <User size={64} className="text-gray-400" />
+                    <User size={64} className="text-gray-400 dark:text-white/70" />
                   )}
                 </div>
 
@@ -175,7 +179,8 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   <div className="mt-5 flex gap-4">
                     {!userOverride && (
                       <>
-                        <button onClick={onEditProfile} className="mt-3 bg-[#35A5F5] text-white px-4 py-2 rounded-md text-sm font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition cursor-pointer">
+                        {/* mt-4 px-4 py-2 rounded-md w-full bg-[#2C50AB] hover:bg-[#3b62c7] text-white text-sm font-medium transition-colors cursor-pointer */}
+                        <button onClick={onEditProfile} className="mt-3 bg-[#2C50AB] hover:bg-[#3b62c7] text-white px-4 py-2 rounded-md text-sm font-medium shadow-md active:scale-95 transition cursor-pointer">
                           Edit Profile
                         </button>
 
@@ -217,14 +222,25 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                 </div>
 
                 {/* SMALL CARD */}
-                <div className="bg-linear-to-b from-[#DCEFFD] to-[#B6D9F3] p-3 rounded-lg w-full lg:w-[180px]">
+                <div className="bg-linear-to-b border border-[#07213c] from-[#DCEFFD] to-[#B6D9F3]
+    dark:bg-none
+    dark:bg-slate-900
+    dark:text-white
+    dark:ring-1 dark:ring-white/15
+    p-3
+    rounded-lg
+    w-full
+    lg:w-45">
                   <p className="text-xs font-medium">Start where you left –</p>
                   <p className="text-xs font-medium">complete your pending tasks</p>
                   <div className="flex items-center gap-2 mt-6">
                     <img src={people} alt="" className="w-10 h-4" />
                     <p className="text-xs">+7 members involved</p>
                   </div>
-                  <button className="mt-3 bg-[#35A5F5] text-white px-3 py-1.5 rounded-md text-xs w-full font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition cursor-pointer">Jump to the task</button>
+                  {/* mt-4 px-4 py-2 rounded-md w-full bg-[#2C50AB] hover:bg-[#3b62c7] text-white text-sm font-medium transition-colors   */}
+                  <button className="mt-4 px-4 py-2 rounded-md w-full
+                      bg-[#2C50AB] hover:bg-[#3b62c7]
+                      text-white text-sm font-medium transition-colors cursor-pointer">Jump to the task</button>
                 </div>
               </div>
             </section>
@@ -239,9 +255,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   { label: "Completed", value: stats.completed || 0 },
                   { label: "Due Tasks", value: stats.dueTasks || 0 }
                 ].map((item, index) => (
+                  /* group bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#ddeeff] dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[#2c50ab]/30 hover:-translate-y-1 transition-all duration-300 ease-out */
                   <div
                     key={index}
-                    className="bg-[#e6f0fb] p-4 rounded-lg flex justify-between items-center shadow-md"
+                    className="bg-[#DDEFFF] dark:bg-slate-900 p-4 rounded-xl flex justify-between items-center border border-[#ddeeff] dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[#2c50ab]/30 hover:-translate-y-1 transition-all duration-300 ease-out"
                   >
                     <div>
                       <p className="text-sm font-medium">{item.label}</p>
@@ -259,53 +276,53 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
 
               <div className="space-y-3">
                 {tasks.length === 0 && (
-                  <div className="bg-[#e6f0fb] p-4 rounded-lg shadow-md text-gray-600">No tasks assigned</div>
+                  <div className="bg-[#DDEFFF] dark:bg-slate-900 p-4 rounded-xl flex justify-between items-center shadow-sm">No tasks assigned</div>
                 )}
 
                 {tasks.map((task, index) => {
                   const canMark = authUser && (authUser.role === 'Admin' || String(authUser.id) === String(task.assigned_to));
                   const isCompleted = task.status === 'completed';
                   return (
-                  <div key={task.id || index} className="bg-[#e6f0fb] p-4 rounded-lg flex justify-between items-center shadow-md">
-                    <div>
-                      <p className="font-semibold">{index + 1}. {task.title}</p>
-                      <p className="text-sm font-medium mt-1">Assigned by: {task.created_by_name || '—'}</p>
-                      <p className="text-sm text-gray-500 mt-1">Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}</p>
-                      {isCompleted && (
-                        <p className="text-xs text-gray-500 mt-1">Completed: {task.certified_at ? new Date(task.certified_at).toLocaleString() : (task.updated_at ? new Date(task.updated_at).toLocaleString() : '—')}</p>
-                      )}
-                      {isCompleted && task.certified_by_name && (
-                        <p className="text-xs text-gray-500">Certified by: {task.certified_by_name}</p>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-11 rounded-full bg-[#6d5dfc] flex items-center justify-center text-white text-xs font-semibold">
-                        {task.percent_completed ? `${task.percent_completed}%` : '—'}
+                    <div key={task.id || index} className="bg-[#e6f0fb] p-4 rounded-lg flex justify-between items-center shadow-md">
+                      <div>
+                        <p className="font-semibold">{index + 1}. {task.title}</p>
+                        <p className="text-sm font-medium mt-1">Assigned by: {task.created_by_name || '—'}</p>
+                        <p className="text-sm text-gray-500 mt-1">Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}</p>
+                        {isCompleted && (
+                          <p className="text-xs text-gray-500 mt-1">Completed: {task.certified_at ? new Date(task.certified_at).toLocaleString() : (task.updated_at ? new Date(task.updated_at).toLocaleString() : '—')}</p>
+                        )}
+                        {isCompleted && task.certified_by_name && (
+                          <p className="text-xs text-gray-500">Certified by: {task.certified_by_name}</p>
+                        )}
                       </div>
 
-                      {!isCompleted && canMark ? (
-                        <button onClick={async () => {
-                          try {
-                            const { updateTask } = await import('../../services/taskService.js');
-                            // Admins certify, users mark complete
-                            if (authUser.role === 'Admin') {
-                              await updateTask(task.id, { status: 'completed' });
-                            } else {
-                              await updateTask(task.id, { status: 'completed', percent_completed: 100 });
-                            }
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-11 rounded-full bg-[#6d5dfc] flex items-center justify-center text-white text-xs font-semibold">
+                          {task.percent_completed ? `${task.percent_completed}%` : '—'}
+                        </div>
 
-                            await (async () => { const { getTasks } = await import('../../services/taskService.js'); const res = await getTasks(userOverride?.id); setTasks(res.data || []); })();
-                            window.dispatchEvent(new Event('tasks-updated'));
-                          } catch (err) {
-                            console.error('Failed to mark complete', err);
-                          }
-                        }} className="px-3 py-1 rounded-md bg-green-600 text-white text-sm">{authUser?.role === 'Admin' ? 'Certify & Mark done' : 'Mark complete'}</button>
-                      ) : (
-                        <span className="px-2 py-1 rounded-md bg-gray-200 text-sm">{isCompleted ? 'Completed' : 'Not allowed'}</span>
-                      )}
+                        {!isCompleted && canMark ? (
+                          <button onClick={async () => {
+                            try {
+                              const { updateTask } = await import('../../services/taskService.js');
+                              // Admins certify, users mark complete
+                              if (authUser.role === 'Admin') {
+                                await updateTask(task.id, { status: 'completed' });
+                              } else {
+                                await updateTask(task.id, { status: 'completed', percent_completed: 100 });
+                              }
+
+                              await (async () => { const { getTasks } = await import('../../services/taskService.js'); const res = await getTasks(userOverride?.id); setTasks(res.data || []); })();
+                              window.dispatchEvent(new Event('tasks-updated'));
+                            } catch (err) {
+                              console.error('Failed to mark complete', err);
+                            }
+                          }} className="px-3 py-1 rounded-md bg-green-600 text-white text-sm">{authUser?.role === 'Admin' ? 'Certify & Mark done' : 'Mark complete'}</button>
+                        ) : (
+                          <span className="px-2 py-1 rounded-md bg-gray-200 text-sm">{isCompleted ? 'Completed' : 'Not allowed'}</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
                   );
                 })}
               </div>
@@ -314,13 +331,18 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
             {/* QUICK ACTIONS */}
             <div className="mt-5 shadow-md">
               <h3 className="mt-1.5 mb-3 text-[18px] font-semibold">Quick actions</h3>
-              <div className="relative bg-[#e6f0fb] p-[22px] rounded-[14px]">
+              { /* group bg-white dark:bg-slate-900 p-6 rounded-xl border border-[#ddeeff] dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:shadow-[#2c50ab]/30 hover:-translate-y-1 transition-all duration-300 ease-out */}
+              <div className="relative bg-[#DDEFFF] dark:bg-slate-900
+text-gray-900 dark:text-white
+p-5.5 rounded-[14px]">
                 {/* Center separator */}
-                <div className="absolute top-4 bottom-4 left-1/2 w-px bg-[#cbd5e1]" />
-                <div className="grid grid-cols-2 gap-y-[18px] gap-x-10">
+                <div className="absolute top-4 bottom-4 left-1/2 w-px bg-[#cbd5e1] dark:bg-white/20" />
+                <div className="grid grid-cols-2 gap-y-4.5 gap-x-10">
                   {/* Latest Feeds */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <rect x="4" y="4" width="16" height="16" />
                       <path d="M8 9h8M8 13h6" />
                     </svg>
@@ -328,8 +350,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Location */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <path d="M12 21s6-5.3 6-10a6 6 0 10-12 0c0 4.7 6 10 6 10z" />
                       <circle cx="12" cy="11" r="2" />
                     </svg>
@@ -337,8 +361,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Latest Uploads */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <path d="M12 16V4" />
                       <path d="M8 8l4-4 4 4" />
                       <path d="M4 20h16" />
@@ -347,8 +373,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Recently deleted */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <path d="M3 6h18" />
                       <path d="M8 6v14h8V6" />
                       <path d="M10 10v6M14 10v6" />
@@ -357,8 +385,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Languages */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <path d="M4 5h8" />
                       <path d="M8 5v14" />
                       <path d="M4 19h8" />
@@ -369,8 +399,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Clear History */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <path d="M3 12a9 9 0 109-9" />
                       <path d="M3 3v6h6" />
                       <path d="M12 7v5l3 3" />
@@ -379,8 +411,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Display */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer">
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1">
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <rect x="3" y="4" width="18" height="12" />
                       <path d="M8 20h8" />
                     </svg>
@@ -388,8 +422,10 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
                   </div>
 
                   {/* Files & Documents */}
-                  <div className="flex items-center gap-3 hover:bg-gray-100 cursor-pointer" >
-                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.8">
+                  <div className="flex items-center gap-3 
+hover:bg-gray-100 dark:hover:bg-white/10 
+cursor-pointer rounded-md p-1" >
+                    <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                       <path d="M6 3h8l4 4v14H6z" />
                       <path d="M14 3v5h5" />
                     </svg>
@@ -421,115 +457,121 @@ const ProfilePage = ({ onEditProfile, userOverride, tasksOverride }) => {
 
           {/* RIGHT SIDEBAR */}
           <div className="w-full lg:w-80">
-            <div className="bg-[#DDEFFF] rounded-3xl px-4 py-5 space-y-5">
-                {/* top-right ? icon */}
-                <div className="flex justify-end">
-                  <button className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-xs font-semibold text-gray-600 shadow-sm">?</button>
-                </div>
+            <div className="bg-[#DDEFFF] dark:bg-slate-900
+text-gray-900 dark:text-white
+rounded-3xl px-4 py-5 space-y-5">
+              {/* top-right ? icon */}
+              <div className="flex justify-end">
+                <button className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-xs font-semibold text-gray-600 shadow-sm">?</button>
+              </div>
 
-                {/* circular score */}
-                <div className="flex justify-center">
-                  <div className="relative w-28 h-28">
-                    <svg viewBox="0 0 36 36" className="w-full h-full">
-                      {/* background circle */}
-                      <path className="text-[#C3DBFF]" stroke="currentColor" strokeWidth="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                      {/* progress arc */}
-                      <path className="text-[#8B5CF6]" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeDasharray={`${stats.score ?? 0} 100`} fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                    </svg>
+              {/* circular score */}
+              <div className="flex justify-center">
+                <div className="relative w-28 h-28">
+                  <svg viewBox="0 0 36 36" className="w-full h-full">
+                    {/* background circle */}
+                    <path className="text-[#C3DBFF]" stroke="currentColor" strokeWidth="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    {/* progress arc */}
+                    <path className="text-[#8B5CF6]" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeDasharray={`${stats.score ?? 0} 100`} fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
 
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span className="text-xl font-bold">{stats.score ?? 0}%</span>
-                      <span className="text-xs text-gray-600 -mt-0.5">Score</span>
-                    </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className="text-xl font-bold">{stats.score ?? 0}%</span>
+                    <span className="text-xs text-gray-600 -mt-0.5">Score</span>
                   </div>
                 </div>
+              </div>
 
-                {/* Fantastic job pill */}
-                <div className="flex justify-center">
-                  <button className="inline-flex items-center gap-2 rounded-full bg-[#2F9DF7] text-white text-xs font-medium px-4 py-1.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-red-500" />Fantastic job</button>
-                </div>
+              {/* Fantastic job pill */}
+              <div className="flex justify-center">
+                <button className="inline-flex items-center gap-2 rounded-full bg-[#2F9DF7] text-white text-xs font-medium px-4 py-1.5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-red-500" />Fantastic job</button>
+              </div>
 
-                {/* Statistics header */}
-                <div className="flex items-center justify-between pt-1">
-                  <p className="text-sm font-semibold text-gray-800">Statistics</p>
-                  <button className="inline-flex items-center gap-1 bg-[#2F9DF7] text-white text-xs px-3 py-1 rounded-full shadow-sm">
-                    <span>Nov</span>
-                    <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                </div>
+              {/* Statistics header */}
+              <div className="flex items-center justify-between pt-1">
+                <p className="text-sm font-semibold dark:text-gray-100">Statistics</p>
+                <button className="inline-flex items-center gap-1 bg-[#2F9DF7] text-white text-xs px-3 py-1 rounded-full shadow-sm">
+                  <span>Nov</span>
+                  <svg className="w-3 h-3" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
 
-                {/* Statistic cards */}
-                <div className="space-y-3">
-                  {(() => {
-                    const total = stats.totalTasks || 0;
-                    const completedRate = total ? Math.round((stats.completed / total) * 100) : 0;
-                    const innovationPercent = total ? Math.round((stats.dueTasks / total) * 100) : 0;
-                    const statItems = [
-                      { title: 'Performance', subtitle: 'Based on work', percent: `${stats.progress ?? 0}%`, badge: null },
-                      { title: 'Success', subtitle: 'Based on tasks', percent: `${completedRate}%`, badge: (total && stats.completed < total) ? 'Active' : null },
-                      { title: 'Innovation', subtitle: 'Pending/Due', percent: `${innovationPercent}%`, badge: stats.dueTasks > 0 ? `${stats.dueTasks} due` : null },
-                    ];
+              {/* Statistic cards */}
+              <div className="space-y-3">
+                {(() => {
+                  const total = stats.totalTasks || 0;
+                  const completedRate = total ? Math.round((stats.completed / total) * 100) : 0;
+                  const innovationPercent = total ? Math.round((stats.dueTasks / total) * 100) : 0;
+                  const statItems = [
+                    { title: 'Performance', subtitle: 'Based on work', percent: `${stats.progress ?? 0}%`, badge: null },
+                    { title: 'Success', subtitle: 'Based on tasks', percent: `${completedRate}%`, badge: (total && stats.completed < total) ? 'Active' : null },
+                    { title: 'Innovation', subtitle: 'Pending/Due', percent: `${innovationPercent}%`, badge: stats.dueTasks > 0 ? `${stats.dueTasks} due` : null },
+                  ];
 
-                    return statItems.map((item, idx) => (
+                  return statItems.map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#E7F3FF] rounded-2xl px-3 py-3 flex items-center justify-between shadow-sm">
-                    {/* left text & percent chip */}
-                    <div className="flex flex-col justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">
-                          {item.title}
-                        </p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">
-                          {item.subtitle}
-                        </p>
-                      </div>
-                      
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-white/80 text-[10px] font-semibold text-[#4B7AD6]">
-                          {item.percent}
-                        </span>
-                        {item.badge && (
-                          <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[#2F9DF7] text-[10px] font-semibold text-white">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                      className="bg-[#E7F3FF] dark:bg-slate-800
+text-gray-900 dark:text-white
+rounded-2xl px-3 py-3 flex items-center justify-between shadow-sm">
+                      {/* left text & percent chip */}
+                      <div className="flex flex-col justify-between">
+                        <div>
+                          <p className="text-sm font-semibold dark:text-gray-100">
+                            {item.title}
+                          </p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-300">
+                            {item.subtitle}
+                          </p>
+                        </div>
 
-                    {/* simple line chart on right */}
-                    <svg viewBox="0 0 80 32" className="w-16 h-10 text-[#222]" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <polyline points="0,24 12,20 24,22 36,14 48,18 60,10 72,14 80,6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                ))
-                  })()}
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-white/80 text-[10px] font-semibold text-[#4B7AD6]">
+                            {item.percent}
+                          </span>
+                          {item.badge && (
+                            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[#2F9DF7] text-[10px] font-semibold text-white">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* simple line chart on right */}
+                      <svg viewBox="0 0 80 32" className="w-16 h-10 text-[#6a6666]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="0,24 12,20 24,22 36,14 48,18 60,10 72,14 80,6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  ))
+                })()}
               </div>
             </div>
 
-            <br/>
+            <br />
             {/* bottom right section */}
-            <div className="bg-[#E5F4FF] rounded-xl shadow-xl p-6">
-              <div className="space-y">
+            <div className="bg-[#E5F4FF] dark:bg-slate-900
+text-gray-900 dark:text-gray-100
+rounded-xl shadow-xl p-6">
+              <div className="space-y-2">
                 <SidebarItem icon={<Heart />} label="Appreciations" onClick={() => navigate('/recognition')} />
                 <SidebarItem icon={<UserPlus />} label="My Referrals" onClick={() => navigate('/profile/referrals')} />
                 <SidebarItem icon={<Settings />} label="Settings" onClick={() => navigate('/settings')} />
                 <button className="w-full bg-red-50 text-red-600 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-red-100 active:scale-95 transition"
                   onClick={async () => {
-                  const { logout } = await import("../../services/auth.service.js");
-                  await logout();
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("user");
-                  window.location.href = "/login";
+                    const { logout } = await import("../../services/auth.service.js");
+                    await logout();
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    window.location.href = "/login";
                   }}>
                   <LogOut className="w-5 h-5" />
                   Logout
                 </button>
               </div>
-              
+
             </div>
           </div>
 
@@ -557,7 +599,7 @@ const MenuItem = ({ icon, label, onClick }) => (
 );
 
 const SidebarItem = ({ icon, label, onClick }) => (
-  <button onClick={onClick} className="flex items-center gap-3 w-full text-left text-gray-600 hover:text-[#266ECD] hover:bg-gray-100 p-3 rounded-xl active:scale-[0.98] transition">
+  <button onClick={onClick} className="flex items-center gap-3 w-full text-left text-gray-600 dark:text-gray-100 hover:text-[#266ECD] hover:bg-gray-100 p-3 rounded-xl active:scale-[0.98] transition">
     {icon}
     <span className="text-sm font-medium">{label}</span>
   </button>

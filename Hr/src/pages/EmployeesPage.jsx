@@ -59,7 +59,7 @@ function EmployeesPage() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/users`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:3000'}/api/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -262,7 +262,7 @@ const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:30
                 <>
                   <button
                     onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-0.5"
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all transform hover:-translate-y-0.5"
                   >
                     <Plus size={18} />
                     Add Employee

@@ -130,60 +130,60 @@ export default function Jobs() {
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-fadeIn">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Recruitment</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Recruitment</h1>
         <div className="ml-4">
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search jobs..."
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+            className="px-3 py-2 border border-gray-300 dark:border-slate-600 dark:text-slate-100 rounded-lg focus:outline-none"
           />
         </div>
       </div>
 
       {/* Create Job */}
       {isAdmin && (
-        <Card>
-          <h2 className="text-lg font-semibold mb-6 text-gray-900">Post a New Job</h2>
+        <Card className="dark:bg-slate-900">
+          <h2 className="text-lg font-semibold mb-6 text-gray-900 dark:text-slate-100">Post a New Job</h2>
           <form onSubmit={submitJob}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Job Title</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-100">Job Title</label>
                 <input
                   placeholder="e.g. Senior Developer"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#020839] focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 dark:text-slate-100 focus:ring-2 focus:ring-[#020839] focus:border-transparent dark:focus:ring-slate-600 dark:focus:border-transparent outline-none transition-all"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Location</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-100">Location</label>
                 <input
                   placeholder="e.g. Remote"
                   value={form.location}
                   onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#020839] focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 dark:text-slate-100 focus:ring-2 focus:ring-[#020839] focus:border-transparent dark:focus:ring-slate-600 outline-none transition-all"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Experience</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-100">Experience</label>
                 <input
                   placeholder="e.g. 3-5 Years"
                   value={form.experience}
                   onChange={(e) => setForm({ ...form, experience: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#020839] focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 dark:text-slate-100 focus:ring-2 focus:ring-[#020839] focus:border-transparent dark:focus:ring-slate-600 outline-none transition-all"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Salary Range</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-100">Salary Range</label>
                 <input
                   placeholder="e.g. $80k - $120k"
                   value={form.salary}
                   onChange={(e) => setForm({ ...form, salary: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#020839] focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 dark:text-slate-100 focus:ring-2 focus:ring-[#020839] focus:border-transparent dark:focus:ring-slate-600 outline-none transition-all"
                   required
                 />
               </div>
@@ -198,12 +198,12 @@ export default function Jobs() {
       )}
 
       {/* Job List */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Active Listings</h2>
+      <div className="space-y-4 ">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">Active Listings</h2>
 
         {loading ? (
-          <Card className="p-0 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between">
+          <Card className="p-0 overflow-hidden dark:bg-slate-900">
+            <div className="p-4 border-b border-gray-200 bg-gray-50 dark:bg-slate-900 flex justify-between">
               <Skeleton className="h-6 w-32" />
               <Skeleton className="h-6 w-24" />
             </div>
@@ -220,14 +220,14 @@ export default function Jobs() {
             </div>
           </Card>
         ) : jobs.length === 0 ? (
-          <Card>
+          <Card className="dark:bg-slate-900">
             <EmptyState
               title="No active job listings"
               description="Get started by creating a new job position above."
             />
           </Card>
         ) : (
-          <Table>
+          <Table className="dark:bg-slate-900">
             <TableHeader>
               <TableRow>
                 <TableHead>Job Title</TableHead>
@@ -279,8 +279,8 @@ export default function Jobs() {
 
             <form onSubmit={submitApplication} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input required placeholder="Full name" value={applicant.name} onChange={(e)=>setApplicant({...applicant,name:e.target.value})} className="px-3 py-2 border rounded" />
-                <input required placeholder="Email" value={applicant.email} onChange={(e)=>setApplicant({...applicant,email:e.target.value})} className="px-3 py-2 border rounded" />
+                <input required placeholder="Full name" value={applicant.name} onChange={(e) => setApplicant({ ...applicant, name: e.target.value })} className="px-3 py-2 border rounded" />
+                <input required placeholder="Email" value={applicant.email} onChange={(e) => setApplicant({ ...applicant, email: e.target.value })} className="px-3 py-2 border rounded" />
               </div>
               <div>
                 <label className="text-sm font-medium">Resume (PDF/DOC)</label>
@@ -293,7 +293,7 @@ export default function Jobs() {
               </div>
               <div>
                 <label className="text-sm font-medium">Cover Letter</label>
-                <textarea value={applicant.coverLetter} onChange={(e)=>setApplicant({...applicant,coverLetter:e.target.value})} className="w-full mt-2 border rounded p-2" rows={4} />
+                <textarea value={applicant.coverLetter} onChange={(e) => setApplicant({ ...applicant, coverLetter: e.target.value })} className="w-full mt-2 border rounded p-2" rows={4} />
               </div>
 
               <div className="flex justify-end">
@@ -303,6 +303,6 @@ export default function Jobs() {
           </div>
         </div>
       )}
-      </div>
+    </div>
   );
 }

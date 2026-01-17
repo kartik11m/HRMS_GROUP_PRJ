@@ -8,17 +8,17 @@ export default function RecruitmentLayout() {
   const getLinkClass = ({ isActive }) =>
     `pb-3 px-1 font-semibold text-sm uppercase tracking-wide border-b-2 transition-all duration-300
      ${isActive
-        ? "border-[#020839] text-[#020839]"
-        : "border-transparent text-gray-400 hover:text-[#020839] hover:border-gray-300"
-     }`;
+      ? "border-[#020839] text-[#020839] dark:text-slate-100"
+      : "border-transparent text-gray-400 dark:text-slate-400 hover:text-[#020839] dark:hover:text-slate-100 hover:border-gray-300 dark:hover:border-slate-600"
+    }`;
 
   return (
     <div className="h-full">
-      
+
       {/* STICKY HEADER */}
-      <div className="sticky top-0 bg-white z-20 border-b shadow-sm">
+      <div className="sticky top-0 bg-white dark:bg-slate-800 z-20 border-b shadow-sm">
         <div className="px-8 pt-6">
-          <h1 className="text-2xl font-bold text-[#020839] mb-4">
+          <h1 className="text-2xl font-bold text-[#020839] dark:text-slate-100 mb-4">
             Recruitment
           </h1>
 
@@ -32,7 +32,7 @@ export default function RecruitmentLayout() {
       </div>
 
       {/* INNER CONTENT ONLY CHANGES */}
-      <div className="px-8 py-6 animate-fadeIn">
+      <div className="px-8 py-6 animate-fadeIn dark:bg-slate-800">
         <Routes>
           <Route index element={<Jobs />} />
           <Route path="applications" element={<Applications />} />

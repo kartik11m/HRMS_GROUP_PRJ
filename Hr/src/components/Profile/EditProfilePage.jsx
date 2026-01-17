@@ -137,70 +137,59 @@ const EditProfilePage = ({ onCancel, onSave }) => {
 
     return (
         <div className="p-4 sm:p-8 max-w-4xl mx-auto relative z-10">
-            <h1 className="text-3xl font-bold text-gray-900 border-b-2 border-gray-900 inline-block mb-12 pb-1">Edit Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 border-b-2 border-gray-900 dark:border-slate-700 inline-block mb-12 pb-1">Edit Profile</h1>
 
             <div className="flex flex-col items-center mb-12">
                 <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg relative flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-slate-700 border-4 border-white dark:border-slate-600 shadow-lg relative flex items-center justify-center">
                         {previewUrl ? (
                             <img src={previewUrl} alt="avatar" className="w-full h-full object-cover" />
                         ) : (
-                            <User size={64} className="text-gray-400" />
+                            <User size={64} className="text-gray-400 dark:text-slate-400" />
                         )}
                     </div>
 
                     {/* Overlay for hover effect */}
-                    <div className="absolute inset-0 bg-black bg-opacity-30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute inset-0 bg-black dark:bg-slate-600 bg-opacity-30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Camera className="text-white w-8 h-8" />
                     </div>
 
-                    <div className="absolute bottom-0 right-0 bg-[#266ECD] p-2 rounded-full border-2 border-white text-white z-10">
+                    <div className="absolute bottom-0 right-0 bg-[#266ECD] dark:bg-slate-600 p-2 rounded-full border-2 border-white text-white z-10">
                         <Pencil size={16} />
                     </div>
 
                     {/* Delete Button */}
-                    <button
-                        type="button"
-                        onClick={handleRemovePhoto}
-                        className="absolute top-0 right-0 bg-red-500 p-2 rounded-full border-2 border-white text-white hover:bg-red-600 transition z-20"
-                        title="Remove photo"
-                    >
+                    <button type="button" onClick={handleRemovePhoto} className="absolute top-0 right-0 bg-red-500 dark:bg-slate-600 p-2 rounded-full border-2 border-white text-white hover:bg-red-600 transition z-20" title="Remove photo">
                         <Trash2 size={16} />
                     </button>
                 </div>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept="image/*"
-                />
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
 
-                <h2 className="text-xl font-bold text-gray-900 mt-4">{firstName} {lastName}</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100 mt-4">{firstName} {lastName}</h2>
             </div>
 
             <div className="space-y-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Details</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100 mb-2">Details</h3>
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-xs text-gray-500 mb-1">First Name</label>
-                        <input ref={firstNameRef} value={firstName} onChange={(e) => setFirstName(e.target.value)} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent" />
+                        <label className="block text-xs text-gray-500 dark:text-slate-400 mb-1">First Name</label>
+                        <input ref={firstNameRef} value={firstName} onChange={(e) => setFirstName(e.target.value)} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent" />
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 mb-1">Last Name</label>
-                        <input value={lastName} onChange={(e) => setLastName(e.target.value)} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent" />
+                        <label className="block text-xs text-gray-500 dark:text-slate-400 mb-1">Last Name</label>
+                        <input value={lastName} onChange={(e) => setLastName(e.target.value)} type="text" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent" />
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 mb-1">Email</label>
-                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent" />
+                        <label className="block text-xs text-gray-500 dark:text-slate-400 mb-1">Email</label>
+                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2.5 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent" />
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 mb-1">Designation</label>
-                        <select value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent">
+                        <label className="block text-xs text-gray-500 dark:text-slate-400 mb-1">Designation</label>
+                        <select value={designation} onChange={(e) => setDesignation(e.target.value)} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:hover-slate-700 rounded-lg px-4 py-2.5 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent">
                             <option value="">Select designation</option>
                             <option value="HR">HR</option>
                             <option value="Developer">Developer</option>
@@ -212,8 +201,8 @@ const EditProfilePage = ({ onCancel, onSave }) => {
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 mb-1">Gender</label>
-                        <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent">
+                        <label className="block text-xs text-gray-500 dark:text-slate-400 mb-1">Gender</label>
+                        <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:hover-slate-700 rounded-lg px-4 py-2.5 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#266ECD] focus:border-transparent">
                             <option value="">Prefer not to say</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -227,7 +216,7 @@ const EditProfilePage = ({ onCancel, onSave }) => {
                     {success && <p className="text-green-600 text-sm mb-2">{success}</p>}
                 </div>
                 <div className="flex justify-center gap-4 mt-6 pt-4">
-                    <button onClick={onCancel} className="px-8 py-2.5 rounded-full bg-gray-400 text-white font-bold hover:bg-gray-500 transition">Cancel</button>
+                    <button onClick={onCancel} className="px-8 py-2.5 rounded-full bg-gray-400 dark:bg-slate-600 text-white font-bold hover:bg-gray-500 dark:hover-slate-700 transition">Cancel</button>
                     <button onClick={handleSave} disabled={saving} className="px-8 py-2.5 rounded-full bg-[#0066FF] text-white font-bold hover:bg-blue-600 transition">{saving ? 'Saving...' : 'Save'}</button>
                 </div>
             </div>
