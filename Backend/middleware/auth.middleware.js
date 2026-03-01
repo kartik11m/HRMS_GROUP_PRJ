@@ -49,7 +49,8 @@ export const authenticate = async (req, res, next) => {
  */
 export const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
-    if (!req.user || !allowedRoles.includes(req.user.designation)) {
+    const userRole = req.user && (req.user.role || req.user.designation);
+    if (!req.user || !allowedRoles.includes(userRole)) {
       return res.status(403).json({ message: "Forbidden: You do not have access to this resource" });
     }
     next();
