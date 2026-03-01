@@ -58,8 +58,8 @@ export default function ArchivedUsers() {
               <tbody>
                 {archived.map(a => (
                   <tr key={a.id} className="border-t">
-                    <td className="py-2 px-3">{a.data?.fullname || a.data?.name || '—'}</td>
-                    <td className="py-2 px-3">{a.data?.email}</td>
+                    <td className="py-2 px-3">{a.data?.user?.fullname || a.data?.fullname || a.data?.name || '—'}</td>
+                    <td className="py-2 px-3">{a.data?.user?.email || a.data?.email || '—'}</td>
                     <td className="py-2 px-3">{a.resigned_at ? new Date(a.resigned_at).toLocaleString() : '—'}</td>
                     <td className="py-2 px-3">{a.resignation_reason || '—'}</td>
                     <td className="py-2 px-3">{a.archived_at ? new Date(a.archived_at).toLocaleString() : '—'}</td>

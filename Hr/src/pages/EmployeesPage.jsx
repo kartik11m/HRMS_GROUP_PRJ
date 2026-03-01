@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Plus, Search, Trash2, Edit2, MoreVertical, Mail, Phone, Filter, Download } from 'lucide-react';
 import AddEmployeeModal from '../components/Employee/AddEmployeeModal';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,10 @@ function EmployeesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const filterRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -215,11 +219,76 @@ function EmployeesPage() {
     }
   };
 
-  const filteredUsers = users.filter(u =>
-    u.fullname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.designation?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const departments = Array.from(new Set(users.map(u => u.department).filter(Boolean))).sort();
+  const statuses = Array.from(new Set(users.map(u => (u.status || u.employee_status || '').toString().trim().toUpperCase()).filter(Boolean))).filter(Boolean);
+
+  let filteredUsers = users.filter(u => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = (u.fullname || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (u.designation || '').toLowerCase().includes(q);
+    if (!matchesSearch) return false;
+
+    if (selectedStatus) {
+      const s = (u.status || u.employee_status || '').toString().trim().toUpperCase();
+      if (s !== selectedStatus) return false;
+    }
+
+    if (selectedDepartment) {
+      if ((u.department || '') !== selectedDepartment) return false;
+    }
+
+    return true;
+  });
+
+  const exportToCSV = (rows) => {
+    if (!rows || rows.length === 0) {
+      alert('No data to export');
+      return;
+    }
+
+    const headers = ['ID','Fullname','Email','Designation','Department','Status','Points','Joined'];
+
+    // Better CSV building to handle quotes & all fields
+    const formatDateISO = (dateStr) => {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d)) return '';
+      return d.toISOString().slice(0,10); // YYYY-MM-DD
+    };
+
+    const buildRow = (u) => {
+      const vals = [
+        u.id,
+        (u.fullname||'').replace(/"/g,'""'),
+        (u.email||'').replace(/"/g,'""'),
+        (u.designation||'').replace(/"/g,'""'),
+        (u.department||'').replace(/"/g,'""'),
+        ((u.status||u.employee_status)||'').toString().replace(/"/g,'""'),
+        u.points||0,
+        formatDateISO(u.date_of_joining) || formatDateISO(u.created_at)
+      ];
+      return '"' + vals.join('","') + '"';
+    };
+
+    const csvBody = [headers.join(','), ...rows.map(buildRow)].join('\n');
+    const blob = new Blob([csvBody], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `employees_export_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Close filter dropdown on outside click
+  useEffect(() => {
+    const onClick = (e) => {
+      if (filterRef.current && !filterRef.current.contains(e.target)) setFilterOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, []);
 
   const isAdmin = currentUser?.role === 'Admin';
 
@@ -288,14 +357,39 @@ function EmployeesPage() {
                 className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none dark:text-slate-100"
               />
             </div>
+            {/* Filters */}
+            <div className="flex gap-2 w-full md:w-auto items-center relative" ref={filterRef}>
+              <div className="relative">
+                <button onClick={() => setFilterOpen(v => !v)} className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 bg-white">
+                  <Filter size={16} />
+                  Filter
+                </button>
 
-            {/* Filters (Visual Only for now) */}
-            <div className="flex gap-2 w-full md:w-auto">
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
-                <Filter size={16} />
-                Filter
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+                {filterOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
+                    <div className="mb-3">
+                      <label className="text-xs text-gray-500">Status</label>
+                      <select value={selectedStatus} onChange={(e)=>setSelectedStatus(e.target.value)} className="w-full mt-1 p-2 border rounded text-sm">
+                        <option value="">All</option>
+                        {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div className="mb-3">
+                      <label className="text-xs text-gray-500">Department</label>
+                      <select value={selectedDepartment} onChange={(e)=>setSelectedDepartment(e.target.value)} className="w-full mt-1 p-2 border rounded text-sm">
+                        <option value="">All</option>
+                        {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => { setSelectedStatus(''); setSelectedDepartment(''); setFilterOpen(false); }} className="px-3 py-1 text-sm border rounded">Clear</button>
+                      <button onClick={() => setFilterOpen(false)} className="px-3 py-1 bg-blue-600 text-white rounded text-sm">Apply</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <button onClick={() => exportToCSV(filteredUsers)} className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 bg-white">
                 <Download size={16} />
                 Export
               </button>
